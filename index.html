@@ -1,0 +1,1814 @@
+```html
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#881337" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="VINO.DOSSIER" />
+  <title>VINO.DOSSIER — Feitelijk Sommelier &amp; Producent Dossier</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    .font-serif-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      letter-spacing: -0.01em;
+    }
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .app-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 1.15rem;
+      box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.06);
+    }
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      min-width: 100%;
+      min-height: 100%;
+      font-size: 999px;
+      text-align: right;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 20;
+    }
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+    .spinner-ring {
+      width: 2.5rem;
+      height: 2.5rem;
+      border: 3px solid #E2E8F0;
+      border-top-color: #881337;
+      border-radius: 9999px;
+      animation: spinSlow 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-24">
+
+  <!-- TOPBALK -->
+  <header class="sticky top-0 z-30 h-14 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 flex items-center justify-between">
+    <button id="brandHomeBtn" type="button" class="flex items-center gap-2.5 text-left focus:outline-none">
+      <div class="w-8 h-8 rounded-xl bg-rose-900 text-white flex items-center justify-center shrink-0 shadow-sm">
+        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M8 22h8"></path>
+          <path d="M12 15v7"></path>
+          <path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"></path>
+          <path d="M7.5 7.5h9"></path>
+        </svg>
+      </div>
+      <div>
+        <span class="font-serif-title font-bold text-lg tracking-tight text-slate-900 block leading-none">
+          VINO<span class="text-rose-800">.</span>DOSSIER
+        </span>
+        <span class="text-[10px] text-slate-500 font-semibold tracking-wider uppercase block mt-0.5">
+          Feiten • Producent • Expert • 2026
+        </span>
+      </div>
+    </button>
+    <div class="flex items-center gap-2">
+      <button id="apiKeyModalBtn" type="button" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 flex items-center gap-1" title="API-sleutel instellen voor gebruik als zelfstandige app (bijv. GitHub Pages)">
+        <svg class="w-3 h-3 text-rose-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+        <span id="apiKeyStatusText">App-Sleutel</span>
+      </button>
+      <span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-800 flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+        <span>Geen Vivino</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- MODAL VOOR EIGEN GEMINI API SLEUTEL (VOOR GITHUB PAGES / STANDALONE PWA) -->
+  <div id="apiKeyModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl p-5 max-w-sm w-full shadow-xl space-y-3.5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-serif-title font-bold text-slate-900">Eigen App / GitHub Sleutel</h3>
+        <button id="closeApiKeyModal" type="button" class="text-slate-400 hover:text-slate-700 font-bold text-sm px-1">✕</button>
+      </div>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        Binnen Gemini werkt de scanner direct. Gebruik je deze app zelfstandig op je startscherm via <strong>GitHub Pages</strong>? Plak hieronder dan eenmalig je gratis Google AI Studio API-sleutel. Deze wordt uitsluitend lokaal op je telefoon bewaard.
+      </p>
+      <input id="customApiKeyInput" type="password" autocomplete="off" placeholder="Plak AIzaSy... sleutel hier" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono-num text-slate-900 focus:outline-none focus:border-rose-800" />
+      <div class="flex gap-2">
+        <button id="saveApiKeyBtn" type="button" class="flex-1 py-2.5 px-4 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-bold text-xs">Opslaan op toestel</button>
+        <button id="clearApiKeyBtn" type="button" class="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs">Wissen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MELDINGEN BANNER -->
+  <div id="statusBanner" class="hidden max-w-xl w-full mx-auto px-3.5 pt-3">
+    <div class="rounded-2xl px-3.5 py-3 bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-start justify-between gap-2.5 shadow-sm">
+      <div class="flex items-start gap-2">
+        <svg class="w-4 h-4 text-rose-700 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="statusBannerMsg" class="leading-relaxed font-medium"></span>
+      </div>
+      <button id="statusBannerClose" type="button" class="text-rose-700 font-bold px-1">✕</button>
+    </div>
+  </div>
+
+  <!-- HOOFDINHOUD -->
+  <main class="flex-1 w-full max-w-xl mx-auto px-3.5 pt-3.5">
+
+    <!-- SCREEN 1: SCANNER & INVOER -->
+    <section id="screenScanner" class="space-y-3.5">
+      <!-- UPLOAD & CAMERA BLOK -->
+      <div class="app-card p-4 space-y-3.5">
+        <div>
+          <span class="text-[10px] uppercase tracking-widest text-rose-800 font-bold block">Optie 1 • Wijnlabel Scannen</span>
+          <h1 class="text-2xl font-serif-title font-bold text-slate-900 leading-tight mt-0.5">
+            Fotografeer of Upload een Etiket
+          </h1>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+            Direct geverifieerde producentfeiten, cuvée-check, WSET-structuur, 3-kleuren rijpingscurve, Chef’s Touch en directe webwinkellinks.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Galerij Bestandsknop -->
+          <div class="file-input-wrapper py-3.5 px-3.5 rounded-xl bg-rose-800 hover:bg-rose-900 text-white shadow-sm flex items-center justify-between gap-3">
+            <input type="file" id="galleryInput" accept="image/*" />
+            <div class="flex items-center gap-3 min-w-0 pointer-events-none">
+              <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                  <circle cx="9" cy="9" r="2"></circle>
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                </svg>
+              </div>
+              <div class="text-left min-w-0">
+                <div class="font-bold text-sm truncate">Foto Uit Galerij</div>
+                <div class="text-[11px] text-rose-100 truncate">Kies bestaande foto</div>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-rose-100 shrink-0 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+
+          <!-- Directe Camera Knop -->
+          <div class="file-input-wrapper py-3.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-900 shadow-sm flex items-center justify-between gap-3">
+            <input type="file" id="cameraInput" accept="image/*" capture="environment" />
+            <div class="flex items-center gap-3 min-w-0 pointer-events-none">
+              <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-rose-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path>
+                  <circle cx="12" cy="13" r="3"></circle>
+                </svg>
+              </div>
+              <div class="text-left min-w-0">
+                <div class="font-bold text-sm text-slate-900 truncate">Maak Foto (Camera)</div>
+                <div class="text-[11px] text-slate-600 truncate">Open toestelcamera</div>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-rose-800 shrink-0 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- VOORBEELD GEKOZEN FOTO -->
+      <div id="photoPreviewCard" class="hidden app-card p-3.5 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            <span>Etiket gereed</span>
+          </span>
+          <button id="clearPhotoBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold">✕ Wissen</button>
+        </div>
+        <div class="w-full max-h-48 bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center p-2 border border-slate-200">
+          <img id="previewImg" src="" alt="Etiket" class="max-h-44 max-w-full object-contain rounded-lg" />
+        </div>
+        <button id="analyzePhotoBtn" type="button" class="w-full py-3 px-4 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-bold text-xs shadow-sm">
+          Analyseer Dit Etiket Opnieuw
+        </button>
+      </div>
+
+      <!-- TEKSTINVOER BLOK -->
+      <form id="textInputForm" class="app-card p-4 space-y-3">
+        <div>
+          <span class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold block">Optie 2 • Invoer per Tekst</span>
+          <h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Zoek op Wijnnaam &amp; Jaartal</h2>
+        </div>
+
+        <div class="space-y-2.5">
+          <div>
+            <label for="txtWineName" class="block text-[11px] uppercase tracking-wider text-slate-600 font-bold mb-1">Wijnhuis &amp; Cuvée *</label>
+            <input id="txtWineName" type="text" placeholder="Bijv. Sassicaia, Guidalberto, Château Margaux..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-800 focus:bg-white" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="txtVintage" class="block text-[11px] uppercase tracking-wider text-slate-600 font-bold mb-1">Oogstjaar *</label>
+              <input id="txtVintage" type="text" placeholder="Bijv. 2016 of NV" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-800 focus:bg-white" />
+            </div>
+            <div>
+              <label for="txtRegion" class="block text-[11px] uppercase tracking-wider text-slate-600 font-bold mb-1">Streek (Optioneel)</label>
+              <input id="txtRegion" type="text" placeholder="Bijv. Bolgheri, Bordeaux" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-800 focus:bg-white" />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm bg-slate-900 hover:bg-slate-800 text-white shadow-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 text-rose-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Genereer Feitelijk Wijndossier</span>
+        </button>
+      </form>
+
+      <!-- EERDER GESCANDE FLESSEN (CACHE SNELKEUZE) -->
+      <div id="recentCacheCard" class="hidden app-card p-4 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold block">Direct uit Fles-Cache (0 sec)</span>
+            <h3 class="text-base font-serif-title font-bold text-slate-900">Eerder Gescande Wijnen</h3>
+          </div>
+          <button id="clearCacheBtn" type="button" class="text-[11px] text-slate-500 hover:text-rose-800 font-semibold">Wis geheugen</button>
+        </div>
+        <div id="recentCacheList" class="space-y-1.5"></div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: DOSSIER -->
+    <section id="screenDossier" class="hidden space-y-3.5 pb-6">
+      <div id="dossierOutput" class="space-y-3.5"></div>
+    </section>
+  </main>
+
+  <!-- ONDERBALK NAVIGATIE -->
+  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3.5 py-2">
+    <div class="max-w-xl mx-auto grid grid-cols-2 gap-2.5">
+      <button id="navScanBtn" type="button" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-800 text-white font-bold text-xs shadow-sm">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+        <span>Scan &amp; Zoek</span>
+      </button>
+      <button id="navDossierBtn" type="button" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs relative">
+        <svg class="w-4 h-4 text-rose-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+        <span>Wijndossier</span>
+        <span id="dossierBadge" class="hidden w-2 h-2 rounded-full bg-emerald-600 absolute top-2 right-3"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loadingModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-5">
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 max-w-xs w-full text-center shadow-xl space-y-3">
+      <div class="spinner-ring mx-auto"></div>
+      <h3 class="text-lg font-serif-title font-bold text-slate-900">Feiten &amp; Prijzen Verifiëren...</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">Producentfiche, cuvée-positie, rijpingscurve, Chef’s Touch en directe webwinkelpagina’s worden opgehaald (2026).</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var CURRENT_YEAR = 2026;
+      var STORAGE_KEY = 'vino_dossier_cache_v20';
+      var API_KEY_STORAGE = 'vino_dossier_custom_api_key';
+      var GEMINI_MODELS = ['gemini-3-flash-preview', 'gemini-2.5-flash-preview-09-2025', 'gemini-2.5-flash'];
+
+      var appState = {
+        activeTab: 'scanner',
+        currentPhoto: null,
+        dossier: null,
+        dossierFromCache: false,
+        lastQueryOpts: null,
+        qaItems: [],
+        cache: {},
+        customApiKey: ''
+      };
+
+      // ==========================================
+      // 1. PWA MANIFEST & STANDALONE APP ICOON
+      // ==========================================
+      function setupPwaManifest() {
+        try {
+          var iconSvg =
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">' +
+              '<rect width="512" height="512" rx="116" fill="#881337"/>' +
+              '<g transform="translate(116, 96) scale(11.6)" fill="none" stroke="#FFFFFF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M8 22h8"/>' +
+                '<path d="M12 15v7"/>' +
+                '<path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/>' +
+                '<path d="M7.5 7.5h9"/>' +
+              '</g>' +
+            '</svg>';
+          var iconUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+
+          var linkIcon = document.createElement('link');
+          linkIcon.rel = 'icon';
+          linkIcon.type = 'image/svg+xml';
+          linkIcon.href = iconUrl;
+          document.head.appendChild(linkIcon);
+
+          var appleIcon = document.createElement('link');
+          appleIcon.rel = 'apple-touch-icon';
+          appleIcon.href = iconUrl;
+          document.head.appendChild(appleIcon);
+
+          var manifestObj = {
+            name: 'VINO.DOSSIER — Sommelier Scanner',
+            short_name: 'VINO.DOSSIER',
+            description: 'Feitelijk wijnlabel dossier, producentdata en rijpingspotentieel',
+            start_url: window.location.href.split('#')[0],
+            display: 'standalone',
+            background_color: '#F8FAFC',
+            theme_color: '#881337',
+            orientation: 'portrait',
+            icons: [
+              { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+              { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+            ]
+          };
+          var blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+          var manifestLink = document.createElement('link');
+          manifestLink.rel = 'manifest';
+          manifestLink.href = URL.createObjectURL(blob);
+          document.head.appendChild(manifestLink);
+        } catch (e) {}
+      }
+
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) appState.cache = JSON.parse(saved) || {};
+        var savedKey = localStorage.getItem(API_KEY_STORAGE);
+        if (savedKey) appState.customApiKey = savedKey.trim();
+      } catch (e) {}
+
+      function saveCache() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.cache)); } catch (e) {}
+        renderRecentCacheList();
+      }
+
+      function updateApiKeyBadge() {
+        var lbl = document.getElementById('apiKeyStatusText');
+        if (lbl) {
+          lbl.textContent = appState.customApiKey ? 'Sleutel Actief' : 'App-Sleutel';
+        }
+      }
+
+      function showMsg(msg) {
+        var box = document.getElementById('statusBanner');
+        var txt = document.getElementById('statusBannerMsg');
+        if (box && txt) {
+          txt.textContent = msg;
+          box.classList.remove('hidden');
+        }
+      }
+
+      function hideMsg() {
+        var box = document.getElementById('statusBanner');
+        if (box) box.classList.add('hidden');
+      }
+
+      function setBusy(isBusy) {
+        var m = document.getElementById('loadingModal');
+        if (m) {
+          if (isBusy) m.classList.remove('hidden');
+          else m.classList.add('hidden');
+        }
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function makeKey(p, w, v) {
+        var t = (String(p || '') + ' ' + String(w || '')).toLowerCase().replace(/[^a-z0-9]/g, '');
+        var yr = String(v || 'nv').replace(/[^0-9]/g, '');
+        return t + '_' + (yr || 'nv');
+      }
+
+      function parseJsonSafely(txt) {
+        var s = String(txt || '').trim();
+        var st = s.indexOf('{');
+        var en = s.lastIndexOf('}');
+        if (st !== -1 && en > st) s = s.substring(st, en + 1);
+        return JSON.parse(s);
+      }
+
+      // ==========================================
+      // 2. SPECIFIEKE PRODUCTPAGINA & GROUNDING LINK-RESOLVER
+      // ==========================================
+      var BLOCKED_DOMAINS = [
+        'vivino.',
+        'wikipedia.',
+        'youtube.',
+        'facebook.',
+        'instagram.',
+        'pinterest.',
+        'tiktok.',
+        'reddit.',
+        'tripadvisor.',
+        'twitter.',
+        'x.com'
+      ];
+
+      function isBlockedSource(str) {
+        var s = String(str || '').toLowerCase();
+        if (!s) return true;
+        for (var i = 0; i < BLOCKED_DOMAINS.length; i++) {
+          if (s.indexOf(BLOCKED_DOMAINS[i]) !== -1) return true;
+        }
+        return false;
+      }
+
+      function normalizeDomainName(raw) {
+        var s = String(raw || '').trim().toLowerCase();
+        if (!s) return '';
+        s = s.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+        var slashIdx = s.indexOf('/');
+        if (slashIdx !== -1) s = s.substring(0, slashIdx);
+        return s.trim();
+      }
+
+      function buildWineSearcherBottleUrl(w) {
+        var parts = [];
+        if (w.producer) parts.push(w.producer);
+        if (w.wineName && String(w.wineName).toLowerCase().indexOf(String(w.producer || '').toLowerCase()) === -1) {
+          parts.push(w.wineName);
+        } else if (!w.producer && w.wineName) {
+          parts.push(w.wineName);
+        }
+        if (w.appellation) {
+          var cleanApp = String(w.appellation).replace(/\b(DOCG|DOC|IGT|AOC|AOP|DO|DOCa|VDP|AVA|GI)\b/gi, '').trim();
+          if (cleanApp && parts.join(' ').toLowerCase().indexOf(cleanApp.toLowerCase()) === -1) {
+            parts.push(cleanApp);
+          }
+        }
+        if (w.region && parts.join(' ').toLowerCase().indexOf(String(w.region).toLowerCase()) === -1) {
+          parts.push(w.region);
+        }
+        if (w.country) parts.push(w.country);
+
+        var slug = parts
+          .join(' ')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .trim()
+          .replace(/\s+/g, '+');
+
+        var yr = (w.vintage && Number(w.vintage) > 1900) ? ('/' + String(w.vintage)) : '';
+        return 'https://www.wine-searcher.com/find/' + (slug || 'wine') + yr;
+      }
+
+      function buildSiteSpecificProductSearchUrl(domainOrShop, w) {
+        var dom = normalizeDomainName(domainOrShop);
+        var yr = (w.vintage && Number(w.vintage) > 1900) ? String(w.vintage) : '';
+        var qParts = [];
+        if (dom && dom.indexOf('.') !== -1) {
+          qParts.push('site:' + dom);
+        } else if (domainOrShop) {
+          qParts.push('"' + String(domainOrShop).trim() + '"');
+        }
+        if (w.producer) qParts.push('"' + String(w.producer).trim() + '"');
+        if (w.wineName && String(w.wineName).toLowerCase() !== String(w.producer || '').toLowerCase()) {
+          qParts.push('"' + String(w.wineName).trim() + '"');
+        }
+        if (yr) qParts.push(yr);
+        qParts.push('-vivino');
+        return 'https://www.google.nl/search?q=' + encodeURIComponent(qParts.join(' '));
+      }
+
+      // Koppelt de door Google Search gevonden groundingChunks (met echte, bestaande product-URL's) aan winkels en producent
+      function extractVerifiedLinksFromGrounding(groundingChunks, groundingSupports, parsedMeta, w) {
+        var validChunks = [];
+        if (Array.isArray(groundingChunks)) {
+          for (var i = 0; i < groundingChunks.length; i++) {
+            var ch = groundingChunks[i] && groundingChunks[i].web;
+            if (!ch || !ch.uri) continue;
+            var dom = normalizeDomainName(ch.title || ch.uri);
+            if (isBlockedSource(dom) || isBlockedSource(ch.uri)) continue;
+            validChunks.push({
+              index: i,
+              uri: ch.uri,
+              domain: dom || 'wijnbron',
+              title: ch.title || dom || 'Geverifieerde productpagina'
+            });
+          }
+        }
+
+        // Map ondersteunde tekstsegmenten (zoals prijzen/titels) aan chunk-indices
+        var chunkSupportText = {};
+        if (Array.isArray(groundingSupports)) {
+          for (var s = 0; s < groundingSupports.length; s++) {
+            var sup = groundingSupports[s];
+            var segTxt = (sup && sup.segment && sup.segment.text) ? String(sup.segment.text) : '';
+            var indices = (sup && sup.groundingChunkIndices) || [];
+            for (var k = 0; k < indices.length; k++) {
+              var cIdx = indices[k];
+              chunkSupportText[cIdx] = (chunkSupportText[cIdx] ? chunkSupportText[cIdx] + ' ' : '') + segTxt;
+            }
+          }
+        }
+
+        var prodDomainHint = normalizeDomainName(parsedMeta && (parsedMeta.producerDomain || parsedMeta.producerWebsiteUrl));
+        var prodWords = String(w.producer || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .split(/\s+/)
+          .filter(function (wd) { return wd.length >= 4 && wd !== 'chateau' && wd !== 'tenuta' && wd !== 'domaine' && wd !== 'bodega' && wd !== 'weingut' && wd !== 'cantina' && wd !== 'marchesi'; });
+
+        var producerLinkObj = null;
+        var shopLinks = [];
+        var usedUris = {};
+
+        // 1. Zoek eerst de geverifieerde producent-chunk voor deze specifieke wijn
+        for (var p = 0; p < validChunks.length; p++) {
+          var vc = validChunks[p];
+          var isProdMatch = false;
+          if (prodDomainHint && vc.domain.indexOf(prodDomainHint) !== -1) {
+            isProdMatch = true;
+          } else {
+            for (var pw = 0; pw < prodWords.length; pw++) {
+              if (vc.domain.indexOf(prodWords[pw]) !== -1) {
+                isProdMatch = true;
+                break;
+              }
+            }
+          }
+          if (isProdMatch) {
+            producerLinkObj = {
+              url: vc.uri,
+              domain: vc.domain,
+              label: (parsedMeta && parsedMeta.producerPageTitle) ? parsedMeta.producerPageTitle : (vc.domain + ' • Specifieke wijnpagina'),
+              verified: true
+            };
+            usedUris[vc.uri] = true;
+            break;
+          }
+        }
+
+        // 2. Koppel de door het model gevonden winkels aan hun exacte groundingChunk URI
+        var metaShops = (parsedMeta && Array.isArray(parsedMeta.verifiedShops))
+          ? parsedMeta.verifiedShops
+          : (Array.isArray(w.retailers) ? w.retailers : []);
+
+        for (var mIdx = 0; mIdx < metaShops.length; mIdx++) {
+          var ms = metaShops[mIdx] || {};
+          var shopDom = normalizeDomainName(ms.domain || ms.shopUrl || ms.shopName);
+          var shopNameClean = String(ms.shopName || shopDom || 'Wijnwebwinkel').trim();
+          var matchedChunk = null;
+
+          for (var c = 0; c < validChunks.length; c++) {
+            var cand = validChunks[c];
+            if (usedUris[cand.uri]) continue;
+            var candDom = cand.domain;
+            var nameToken = shopNameClean.toLowerCase().replace(/[^a-z0-9]/g, '');
+            var domToken = candDom.replace(/[^a-z0-9]/g, '');
+
+            if (
+              (shopDom && candDom.indexOf(shopDom) !== -1) ||
+              (shopDom && shopDom.indexOf(candDom) !== -1) ||
+              (nameToken.length >= 4 && domToken.indexOf(nameToken) !== -1)
+            ) {
+              matchedChunk = cand;
+              break;
+            }
+          }
+
+          if (matchedChunk) {
+            usedUris[matchedChunk.uri] = true;
+            shopLinks.push({
+              shopName: shopNameClean,
+              priceIndication: ms.priceIndication || '',
+              productTitle: ms.productPageTitle || ('Directe productpagina op ' + matchedChunk.domain),
+              domain: matchedChunk.domain,
+              url: matchedChunk.uri,
+              verified: true
+            });
+          }
+        }
+
+        // 3. Voeg overige geverifieerde webwinkel-chunks uit Google Search direct toe zodat geen enkele echte productlink verloren gaat
+        for (var rem = 0; rem < validChunks.length; rem++) {
+          var rChunk = validChunks[rem];
+          if (usedUris[rChunk.uri]) continue;
+          usedUris[rChunk.uri] = true;
+
+          // Haal eventuele prijs uit de ondersteunende grounding-tekst
+          var supText = chunkSupportText[rChunk.index] || '';
+          var priceMatch = supText.match(/€\s?\d+([.,]\d{1,2})?/);
+          shopLinks.push({
+            shopName: rChunk.domain,
+            priceIndication: priceMatch ? priceMatch[0] : '',
+            productTitle: 'Geverifieerde wijnpagina op ' + rChunk.domain,
+            domain: rChunk.domain,
+            url: rChunk.uri,
+            verified: true
+          });
+        }
+
+        // 4. Als er voor een genoemde winkel geen directe grounding-URI was, maak een site-specifieke fles-zoeklink (nooit een gebroken /search?q= of globale homepage!)
+        if (shopLinks.length === 0 && metaShops.length > 0) {
+          for (var f = 0; f < Math.min(metaShops.length, 3); f++) {
+            var fs = metaShops[f] || {};
+            var fDom = normalizeDomainName(fs.domain || fs.shopUrl);
+            shopLinks.push({
+              shopName: fs.shopName || fDom || 'Wijnwinkel',
+              priceIndication: fs.priceIndication || '',
+              productTitle: 'Zoek exact deze fles bij ' + (fs.shopName || fDom || 'winkel'),
+              domain: fDom || 'Google Productfilter',
+              url: buildSiteSpecificProductSearchUrl(fDom || fs.shopName, w),
+              verified: false
+            });
+          }
+        }
+
+        // 5. Fallback voor producent als het specifieke wijnhuisdomein niet in groundingChunks zat
+        if (!producerLinkObj) {
+          var qProd = '"' + (w.producer || '') + '" "' + (w.wineName || '') + '"';
+          if (prodDomainHint && prodDomainHint.indexOf('.') !== -1 && !isBlockedSource(prodDomainHint)) {
+            producerLinkObj = {
+              url: 'https://www.google.nl/search?q=' + encodeURIComponent('site:' + prodDomainHint + ' ' + qProd),
+              domain: prodDomainHint,
+              label: prodDomainHint + ' • Specifieke wijnpagina zoeken',
+              verified: false
+            };
+          } else {
+            producerLinkObj = {
+              url: 'https://www.google.nl/search?q=' + encodeURIComponent(qProd + ' official winery technical sheet -vivino'),
+              domain: 'Officiële Producent',
+              label: 'Specifieke wijnpagina van ' + (w.producer || 'producent'),
+              verified: false
+            };
+          }
+        }
+
+        return {
+          shopLinks: shopLinks.slice(0, 5),
+          producerLink: producerLinkObj
+        };
+      }
+
+      function findCachedDossier(queryText, vintageText) {
+        var directKey = makeKey(queryText, '', vintageText);
+        if (appState.cache[directKey] && appState.cache[directKey].dossier) {
+          return appState.cache[directKey].dossier;
+        }
+        var normQuery = String(queryText || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        var normYr = String(vintageText || 'nv').replace(/[^0-9]/g, '') || 'nv';
+        if (!normQuery) return null;
+
+        var keys = Object.keys(appState.cache || {});
+        for (var i = 0; i < keys.length; i++) {
+          var entry = appState.cache[keys[i]];
+          if (!entry || !entry.dossier) continue;
+          var d = entry.dossier;
+          var dYr = String(d.vintage || 'nv').replace(/[^0-9]/g, '') || 'nv';
+          if (dYr !== normYr) continue;
+          var dCombined = (String(d.producer || '') + String(d.wineName || '')).toLowerCase().replace(/[^a-z0-9]/g, '');
+          var dWineOnly = String(d.wineName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (dCombined === normQuery || (dWineOnly.length >= 5 && dWineOnly === normQuery)) {
+            return d;
+          }
+        }
+        return null;
+      }
+
+      function renderRecentCacheList() {
+        var card = document.getElementById('recentCacheCard');
+        var list = document.getElementById('recentCacheList');
+        if (!card || !list) return;
+
+        var seenIds = {};
+        var uniqueEntries = [];
+        var keys = Object.keys(appState.cache || {});
+        keys.sort(function (a, b) {
+          return (appState.cache[b].cachedAt || 0) - (appState.cache[a].cachedAt || 0);
+        });
+
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          var item = appState.cache[k] && appState.cache[k].dossier;
+          if (!item || !item.wineName) continue;
+          var canonicalId = makeKey(item.producer, item.wineName, item.vintage);
+          if (seenIds[canonicalId]) continue;
+          seenIds[canonicalId] = true;
+          uniqueEntries.push({ key: k, dossier: item });
+        }
+
+        if (uniqueEntries.length === 0) {
+          card.classList.add('hidden');
+          return;
+        }
+
+        var html = '';
+        var limit = Math.min(uniqueEntries.length, 6);
+        for (var j = 0; j < limit; j++) {
+          var entryObj = uniqueEntries[j];
+          var d = entryObj.dossier;
+          html +=
+            '<button type="button" data-cache-key="' + escapeHtml(entryObj.key) + '" class="w-full text-left p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-between gap-2 transition-colors">' +
+              '<div class="min-w-0">' +
+                '<div class="text-xs font-bold text-slate-900 truncate">' + escapeHtml(d.producer) + ' — ' + escapeHtml(d.wineName) + ' (' + (d.vintage || 'NV') + ')</div>' +
+                '<div class="text-[11px] text-slate-500 truncate">' + escapeHtml(d.appellation) + ' • ' + escapeHtml(d.priceRangeEur75clInclVat || '') + '</div>' +
+              '</div>' +
+              '<span class="text-[10px] font-bold text-rose-800 shrink-0">Open →</span>' +
+            '</button>';
+        }
+        list.innerHTML = html;
+        card.classList.remove('hidden');
+
+        var btns = list.querySelectorAll('button[data-cache-key]');
+        for (var b = 0; b < btns.length; b++) {
+          btns[b].onclick = function () {
+            var ck = this.getAttribute('data-cache-key');
+            if (appState.cache[ck] && appState.cache[ck].dossier) {
+              appState.dossier = appState.cache[ck].dossier;
+              appState.dossierFromCache = true;
+              appState.lastQueryOpts = {
+                wineQuery: appState.dossier.producer + ' ' + appState.dossier.wineName,
+                vintage: String(appState.dossier.vintage || ''),
+                region: appState.dossier.region || ''
+              };
+              appState.qaItems = [];
+              renderDossierView(appState.dossier);
+              switchTab('dossier');
+            }
+          };
+        }
+      }
+
+      // ==========================================
+      // 3. FOTO VERWERKING & COMPRESSIE
+      // ==========================================
+      function handleFileSelected(file) {
+        if (!file) return;
+        hideMsg();
+        setBusy(true);
+
+        var reader = new FileReader();
+        reader.onerror = function () {
+          setBusy(false);
+          showMsg('Kon de foto niet inlezen.');
+        };
+        reader.onload = function (e) {
+          var dataUrl = e.target.result;
+          var img = new Image();
+          img.onload = function () {
+            try {
+              var max = 768;
+              var w = img.width || 768;
+              var h = img.height || 768;
+              if (w > h && w > max) { h = Math.round((h * max) / w); w = max; }
+              else if (h > max) { w = Math.round((w * max) / h); h = max; }
+              var canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              var ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fillRect(0, 0, w, h);
+              ctx.drawImage(img, 0, 0, w, h);
+              var compressed = canvas.toDataURL('image/jpeg', 0.80);
+              var b64 = compressed.split(',')[1];
+
+              appState.currentPhoto = { dataUrl: compressed, base64: b64, mime: 'image/jpeg' };
+              var prevImg = document.getElementById('previewImg');
+              var prevCard = document.getElementById('photoPreviewCard');
+              if (prevImg) prevImg.src = compressed;
+              if (prevCard) prevCard.classList.remove('hidden');
+              setBusy(false);
+
+              runAnalysis({ base64Image: b64, mimeType: 'image/jpeg' }, false);
+            } catch (err) {
+              setBusy(false);
+              showMsg('Fout bij verwerken foto: ' + err.message);
+            }
+          };
+          img.onerror = function () {
+            setBusy(false);
+            showMsg('Ongeldig afbeeldingsformaat.');
+          };
+          img.src = dataUrl;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // ==========================================
+      // 4. GEMINI API ENGINE MET LIVE WEB-GROUNDING
+      // ==========================================
+      async function callGeminiApi(payload, useSearchGrounding) {
+        var apiKey = appState.customApiKey || '';
+        var lastErr = null;
+        for (var i = 0; i < GEMINI_MODELS.length; i++) {
+          var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODELS[i] + ':generateContent?key=' + encodeURIComponent(apiKey);
+          var reqBody = JSON.parse(JSON.stringify(payload));
+          if (useSearchGrounding) {
+            reqBody.tools = [{ google_search: {} }];
+            if (reqBody.generationConfig) {
+              delete reqBody.generationConfig.responseMimeType;
+            }
+          }
+          try {
+            var res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(reqBody)
+            });
+            if (!res.ok) continue;
+            var data = await res.json();
+            var cand = data && data.candidates && data.candidates[0];
+            var parts = cand && cand.content && cand.content.parts;
+            var textOut = '';
+            if (Array.isArray(parts)) {
+              for (var p = 0; p < parts.length; p++) {
+                if (parts[p].text) textOut += parts[p].text;
+              }
+            }
+            if (textOut) {
+              var gm = (cand && cand.groundingMetadata) || {};
+              var chunks = gm.groundingChunks || [];
+              var supports = gm.groundingSupports || [];
+              return { text: textOut, groundingChunks: chunks, groundingSupports: supports };
+            }
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+        throw lastErr || new Error('API verbinding mislukt. Indien je via GitHub Pages werkt, stel dan rechtsboven je App-Sleutel in.');
+      }
+
+      // Gerichte 2e-staps Google Search Grounding specifiek voor de exacte productpagina's van deze fles + jaargang
+      async function fetchGroundedProductPages(dossier) {
+        var yrStr = (dossier.vintage && Number(dossier.vintage) > 1900) ? String(dossier.vintage) : '';
+        var linkPrompt =
+          'Zoek met Google Search naar de EXACTE, specifieke productpagina’s voor deze specifieke wijn en jaargang (GEEN algemene startpagina’s en GEEN wijnhuis-overzichtspagina’s):\n' +
+          '- Producent: ' + (dossier.producer || '') + '\n' +
+          '- Wijn / Cuvée: ' + (dossier.wineName || '') + '\n' +
+          '- Oogstjaar: ' + (yrStr || 'NV') + '\n' +
+          '- Appellatie: ' + (dossier.appellation || '') + '\n\n' +
+          'Voer gericht een Google-zoekopdracht uit naar:\n' +
+          '1) "' + (dossier.producer || '') + '" "' + (dossier.wineName || '') + '" ' + yrStr + ' 75cl kopen prijs Nederland -vivino\n' +
+          '2) "' + (dossier.producer || '') + '" "' + (dossier.wineName || '') + '" official website technical sheet -vivino\n\n' +
+          'Geef UITSLUITEND één geldig JSON-object terug op basis van de daadwerkelijk gevonden zoekresultaten:\n' +
+          '{\n' +
+          '  "priceRangeEur75clInclVat": "Actuele gevonden prijsbandbreedte voor 75cl incl. btw in euro’s",\n' +
+          '  "producerDomain": "domeinnaam van de officiële website van de producent (bijv. antinori.it)",\n' +
+          '  "producerPageTitle": "Titel van de specifieke wijnpagina bij de producent",\n' +
+          '  "verifiedShops": [\n' +
+          '    {\n' +
+          '      "shopName": "Naam van de webwinkel",\n' +
+          '      "domain": "exacte domeinnaam uit het zoekresultaat (bijv. gall.nl of grandcruwijnen.nl)",\n' +
+          '      "priceIndication": "gevonden prijs in €",\n' +
+          '      "productPageTitle": "Exacte titel van de gevonden productpagina van deze fles"\n' +
+          '    }\n' +
+          '  ]\n' +
+          '}';
+
+        var payload = {
+          contents: [{ role: 'user', parts: [{ text: linkPrompt }] }],
+          generationConfig: { temperature: 0.0 }
+        };
+
+        var resp = await callGeminiApi(payload, true);
+        var parsedMeta = {};
+        try {
+          parsedMeta = parseJsonSafely(resp.text);
+        } catch (e) {
+          parsedMeta = {};
+        }
+
+        if (parsedMeta.priceRangeEur75clInclVat && String(parsedMeta.priceRangeEur75clInclVat).indexOf('€') !== -1) {
+          dossier.priceRangeEur75clInclVat = parsedMeta.priceRangeEur75clInclVat;
+        }
+
+        return extractVerifiedLinksFromGrounding(
+          resp.groundingChunks,
+          resp.groundingSupports,
+          parsedMeta,
+          dossier
+        );
+      }
+
+      async function runAnalysis(opts, forceRefresh) {
+        appState.lastQueryOpts = opts;
+        hideMsg();
+
+        if (!forceRefresh && !opts.base64Image && opts.wineQuery) {
+          var cached = findCachedDossier(opts.wineQuery, opts.vintage);
+          if (cached) {
+            appState.dossier = cached;
+            appState.dossierFromCache = true;
+            appState.qaItems = [];
+            renderDossierView(appState.dossier);
+            switchTab('dossier');
+            return;
+          }
+        }
+
+        setBusy(true);
+
+        var systemPrompt =
+          'Je bent een Master of Wine en sommelier. Antwoord UITSLUITEND met één geldig JSON-object in het Nederlands (geen markdown-opmaak buiten de JSON).\n' +
+          'REFERENTIEJAAR: ' + CURRENT_YEAR + '.\n' +
+          'REGELS:\n' +
+          '1. GEEN MARKETINGTAAL: Gebruik feitelijke steekwoorden en droge sommelier-taal. Alleen "producerStoryCommercial" mag het commerciële verhaal van de fabrikant bevatten.\n' +
+          '2. GEEN "NIET GEPUBLICEERD": Als specifieke data voor deze fles ontbreekt, vermeld dat er geen specifieke data voor deze wijn is gevonden en geef de karakteristieken van een vergelijkbare wijn uit dezelfde regio en hetzelfde jaartal.\n' +
+          '3. ETIKET-VALKUIL & CUVÉE-CHECK: Bepaal exact het niveau van deze specifieke fles binnen het assortiment van het huis (bijv. "Grand Vin / Vlaggenschip", "Tweede wijn (Second Vin)", "Specifieke wijngaard-cuvée" of "Instap-cuvée") en geef in "cuveeHierarchyNote" het feitelijke onderscheid t.o.v. andere wijnen van hetzelfde huis.\n' +
+          '4. PROEFNOTITIE IN STEEKWOORDEN: Eén proefnotitie met primaire, secundaire en tertiaire aroma’s, afgestemd op de leeftijd van de wijn in ' + CURRENT_YEAR + '.\n' +
+          '5. WSET SCHAAL: Laag, Medium(-), Medium, Medium(+), Hoog.\n' +
+          '6. CHEF TOUCH BIJ GERECHTEN: Geef bij elk gerecht (zowel klassiek als Aziatisch) een concreet veld "chefsTouch" waarin staat waar in de keuken op gelet moet worden (cuisson, zuurtje in de saus, reductie, zout/vet-balans) om de combinatie met precies deze wijn werkend te krijgen.\n' +
+          '7. ACTUELE NEDERLANDSE PRIJS & SPECIFIEKE PRODUCTPAGINA’S: Zoek de actuele Nederlandse (of Europese indien niet direct in NL verkrijgbaar) prijs voor 75cl incl. btw in ' + CURRENT_YEAR + '. Noem bij "retailers" de daadwerkelijk gevonden wijnwebwinkels met hun domeinnaam. SLUIT VIVINO VOLLEDIG UIT.\n\n' +
+          'VERPLICHT JSON SCHEMA:\n' +
+          '{\n' +
+          '  "producer": "Wijnhuis",\n' +
+          '  "wineName": "Wijnnaam",\n' +
+          '  "vintage": 2018,\n' +
+          '  "country": "Land",\n' +
+          '  "region": "Streek",\n' +
+          '  "appellation": "Appellatie",\n' +
+          '  "classification": "Classificatie",\n' +
+          '  "wineType": "Rood",\n' +
+          '  "abv": "14,0%",\n' +
+          '  "cuveeHierarchyLevel": "Grand Vin / Vlaggenschip",\n' +
+          '  "cuveeHierarchyNote": "Feitelijk onderscheid met tweede wijnen of andere cuvées van dit huis.",\n' +
+          '  "priceRangeEur75clInclVat": "€ 45 – € 50",\n' +
+          '  "retailers": [{"shopName": "Gall & Gall", "domain": "gall.nl", "priceIndication": "€ 48,00", "productPageTitle": "Productpagina van deze fles"}],\n' +
+          '  "grapeBlend": [{"grape": "Merlot", "percentage": 100}],\n' +
+          '  "wineAgeIn2026": "8 jaar oud in 2026",\n' +
+          '  "stageBadge2026": "Nu in de Top",\n' +
+          '  "recommendationNow": "Direct op dronk / 1 uur karafferen",\n' +
+          '  "factualStateNow": "Feitelijke beschrijving van de dronk en balans in 2026.",\n' +
+          '  "conciseTastingSummary": "Feitelijke kernproefnotitie van producent en expert.",\n' +
+          '  "primaryTags": ["Zwarte bes", "Viooltje"],\n' +
+          '  "secondaryTags": ["Cederhout", "Grafiet"],\n' +
+          '  "tertiaryTags": ["Leer", "Bosgrond"],\n' +
+          '  "tertiaryDevelopmentNote": "Feitelijke toelichting op de huidige rijpingsaroma’s.",\n' +
+          '  "wsetBody": "Vol",\n' +
+          '  "wsetTanninsOrGrip": "Medium(+)",\n' +
+          '  "wsetAcidity": "Medium(+)",\n' +
+          '  "wsetSweetness": "Droog",\n' +
+          '  "drinkFrom": 2023,\n' +
+          '  "drinkUntil": 2040,\n' +
+          '  "sweetSpotStart": 2026,\n' +
+          '  "sweetSpotEnd": 2035,\n' +
+          '  "vintageScore": 96,\n' +
+          '  "vintageQualification": "Uitstekend oogstjaar",\n' +
+          '  "vintageClimateFacts": "Feitelijke weersomstandigheden tijdens het groeiseizoen.",\n' +
+          '  "producerStoryCommercial": "Beschrijving en filosofie van de producent.",\n' +
+          '  "terroirFacts": "Bodemtype, ligging en microklimaat.",\n' +
+          '  "vinificationFacts": "Vergisting, duur en percentage eikenhoutrijping.",\n' +
+          '  "servingTemperature": "17 – 18 °C",\n' +
+          '  "decantingAdvice2026": "1 uur vooraf",\n' +
+          '  "glasswareAdvice": "Bordeauxglas",\n' +
+          '  "classicPairings": [{"dish": "Klassiek gerecht", "rationale": "Smaaktechnische aansluiting.", "chefsTouch": "Waar op te letten bij bereiding/saus om de combinatie te laten slagen."}],\n' +
+          '  "asianCuisineName": "Japans / Kantonees / Sichuan / Thais",\n' +
+          '  "asianDishName": "Aziatisch gerecht",\n' +
+          '  "asianPairingRationale": "Aansluiting op umami, zuren en tannines.",\n' +
+          '  "asianChefsTouch": "Specifiek bereidings- en kruidingsadvies voor deze wijn-spijs match.",\n' +
+          '  "producerDomain": "tenutasanguido.com",\n' +
+          '  "consultedExpertSources": ["Technische fiche producent", "Decanter", "Vinous"]\n' +
+          '}';
+
+        var userParts = [];
+        if (opts.base64Image) {
+          userParts.push({ text: 'Lees dit wijnlabel exact uit en geef het volledige feitelijke JSON-dossier inclusief cuveeHierarchyNote en chefsTouch.' });
+          userParts.push({ inlineData: { mimeType: opts.mimeType || 'image/jpeg', data: opts.base64Image } });
+        } else {
+          userParts.push({ text: 'Zoek actuele gegevens, de specifieke productpagina’s bij Nederlandse/Europese wijnwinkels en de specifieke wijnpagina bij de producent voor: "' + opts.wineQuery + '" "' + (opts.vintage || '') + '" 75cl kopen prijs (' + (opts.region || '') + '), en geef het JSON-dossier.' });
+        }
+
+        var basePayload = {
+          contents: [{ role: 'user', parts: userParts }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { temperature: 0.0, responseMimeType: 'application/json' }
+        };
+
+        try {
+          var apiResp = null;
+          var dossier = null;
+          try {
+            apiResp = await callGeminiApi(basePayload, !opts.base64Image);
+            dossier = parseJsonSafely(apiResp.text);
+          } catch (firstErr) {
+            apiResp = await callGeminiApi(basePayload, false);
+            dossier = parseJsonSafely(apiResp.text);
+          }
+
+          // Verzeker dat we altijd echte, bestaande Google Search Grounding product-URL's hebben
+          var initialLinks = extractVerifiedLinksFromGrounding(
+            apiResp ? apiResp.groundingChunks : [],
+            apiResp ? apiResp.groundingSupports : [],
+            dossier,
+            dossier
+          );
+
+          var hasVerifiedShopChunks = initialLinks.shopLinks.some(function (s) { return s.verified; });
+          if (!hasVerifiedShopChunks) {
+            try {
+              var liveGrounded = await fetchGroundedProductPages(dossier);
+              if (liveGrounded && liveGrounded.shopLinks && liveGrounded.shopLinks.length > 0) {
+                initialLinks = liveGrounded;
+              }
+            } catch (linkErr) {}
+          }
+
+          dossier.resolvedShopLinks = initialLinks.shopLinks;
+          dossier.resolvedProducerLink = initialLinks.producerLink;
+
+          var canonicalKey = makeKey(dossier.producer, dossier.wineName, dossier.vintage);
+          appState.cache[canonicalKey] = { dossier: dossier, cachedAt: Date.now() };
+          if (!opts.base64Image && opts.wineQuery) {
+            var qKey = makeKey(opts.wineQuery, '', opts.vintage);
+            appState.cache[qKey] = { dossier: dossier, cachedAt: Date.now() };
+          }
+          saveCache();
+
+          appState.dossier = dossier;
+          appState.dossierFromCache = false;
+          appState.qaItems = [];
+          setBusy(false);
+          renderDossierView(dossier);
+          switchTab('dossier');
+        } catch (err) {
+          setBusy(false);
+          showMsg('Kon het wijndossier niet genereren: ' + err.message);
+        }
+      }
+
+      // ==========================================
+      // 5. WISKUNDIGE 3-KLEUREN VERLOOPCURVE (VARIANT 2)
+      // ==========================================
+      function getCurveYAtU(uVal) {
+        var u = Math.max(0.02, Math.min(0.98, uVal));
+        var uStart = 0.02;
+        var uPeak = 0.60;
+        var uEnd = 0.98;
+        var yBottom = 150;
+        var yTop = 18;
+        var normHeight = 0;
+
+        if (u <= uPeak) {
+          var tRise = (u - uStart) / (uPeak - uStart);
+          normHeight = 0.5 - 0.5 * Math.cos(Math.pow(tRise, 1.15) * Math.PI);
+        } else {
+          var tFall = (u - uPeak) / (uEnd - uPeak);
+          normHeight = 0.5 + 0.5 * Math.cos(Math.pow(tFall, 0.95) * Math.PI);
+        }
+        return yBottom - normHeight * (yBottom - yTop);
+      }
+
+      function buildSmoothCurveSvgPaths() {
+        var steps = 96;
+        var uMin = 0.02;
+        var uMax = 0.98;
+        var dStroke = '';
+        for (var i = 0; i <= steps; i++) {
+          var u = uMin + (i / steps) * (uMax - uMin);
+          var x = Math.round(u * 4000) / 10;
+          var y = Math.round(getCurveYAtU(u) * 10) / 10;
+          dStroke += (i === 0 ? 'M ' : ' L ') + x + ' ' + y;
+        }
+        var dArea = dStroke + ' L ' + (uMax * 400) + ' 154 L ' + (uMin * 400) + ' 154 Z';
+        return { strokePath: dStroke, areaPath: dArea };
+      }
+
+      function computeMaturationData(w) {
+        var rawDrinkFrom = Number(w.drinkFrom) || 2024;
+        var rawDrinkUntil = Number(w.drinkUntil) || 2038;
+        var rawSweetStart = Number(w.sweetSpotStart) || 2026;
+        var rawSweetEnd = Number(w.sweetSpotEnd) || 2033;
+
+        var hasVintage = Number(w.vintage) > 1900 && Number(w.vintage) <= CURRENT_YEAR + 1;
+        var baseYear = hasVintage ? Number(w.vintage) : Math.min(rawDrinkFrom - 2, CURRENT_YEAR - 2);
+
+        var ySweetStart = Math.max(baseYear + 1, rawSweetStart);
+        var ySweetEnd = Math.max(ySweetStart + 1, rawSweetEnd);
+        var yDrinkStart = Math.min(rawDrinkFrom, ySweetStart);
+        yDrinkStart = Math.max(baseYear, yDrinkStart);
+        var yDrinkEnd = Math.max(ySweetEnd + 1, rawDrinkUntil);
+
+        var ageYoungEnd = Math.max(0, yDrinkStart - baseYear - 1);
+        var ageReadyStart = Math.max(ageYoungEnd + (ageYoungEnd > 0 ? 1 : 0), yDrinkStart - baseYear);
+        var ageReadyEnd = Math.max(ageReadyStart, ySweetStart - baseYear - 1);
+        var ageTopStart = Math.max(ageReadyEnd + (ySweetStart > yDrinkStart ? 1 : 0), ySweetStart - baseYear);
+        var ageTopEnd = Math.max(ageTopStart + 1, ySweetEnd - baseYear);
+        var ageDeclineStart = ageTopEnd + 1;
+
+        var col1Years = hasVintage ? ('0–' + ageYoungEnd + ' jaar') : ('<' + yDrinkStart);
+        var col2Years = hasVintage ? (ageReadyStart + '–' + ageReadyEnd + ' jaar') : (yDrinkStart + '–' + Math.max(yDrinkStart, ySweetStart - 1));
+        var col3Years = hasVintage ? (ageTopStart + '–' + ageTopEnd + ' jaar') : (ySweetStart + '–' + ySweetEnd);
+        var col4Years = hasVintage ? (ageDeclineStart + ' jaar') : ('>' + ySweetEnd);
+
+        var col1Cal = baseYear + '–' + Math.max(baseYear, yDrinkStart - 1);
+        var col2Cal = yDrinkStart + '–' + Math.max(yDrinkStart, ySweetStart - 1);
+        var col3Cal = ySweetStart + '–' + ySweetEnd;
+        var col4Cal = 'vanaf ' + (ySweetEnd + 1);
+
+        var linePct = 50;
+        var activeCol = 3;
+
+        if (CURRENT_YEAR < yDrinkStart) {
+          activeCol = 1;
+          var span1 = Math.max(1, yDrinkStart - baseYear);
+          var pos1 = Math.max(0, (CURRENT_YEAR - baseYear) / span1);
+          linePct = 5 + pos1 * 19;
+        } else if (CURRENT_YEAR < ySweetStart) {
+          activeCol = 2;
+          var span2 = Math.max(1, ySweetStart - yDrinkStart);
+          var pos2 = (CURRENT_YEAR - yDrinkStart) / span2;
+          linePct = 25 + pos2 * 24;
+        } else if (CURRENT_YEAR <= ySweetEnd) {
+          activeCol = 3;
+          var span3 = Math.max(1, ySweetEnd - ySweetStart);
+          var pos3 = (CURRENT_YEAR - ySweetStart) / span3;
+          linePct = 50 + pos3 * 24;
+        } else {
+          activeCol = 4;
+          var span4 = Math.max(3, (yDrinkEnd + 3) - ySweetEnd);
+          var pos4 = Math.min(1, (CURRENT_YEAR - ySweetEnd) / span4);
+          linePct = 75 + pos4 * 20;
+        }
+
+        linePct = Math.max(5, Math.min(95, Math.round(linePct * 10) / 10));
+
+        return {
+          baseYear: baseYear,
+          yDrinkStart: yDrinkStart,
+          ySweetStart: ySweetStart,
+          ySweetEnd: ySweetEnd,
+          yDrinkEnd: yDrinkEnd,
+          col1Years: col1Years,
+          col2Years: col2Years,
+          col3Years: col3Years,
+          col4Years: col4Years,
+          col1Cal: col1Cal,
+          col2Cal: col2Cal,
+          col3Cal: col3Cal,
+          col4Cal: col4Cal,
+          linePct: linePct,
+          activeCol: activeCol,
+          isSweet: CURRENT_YEAR >= ySweetStart && CURRENT_YEAR <= ySweetEnd
+        };
+      }
+
+      function renderThreeColorMaturationCurve(w, m) {
+        var paths = buildSmoothCurveSvgPaths();
+        var uNow = m.linePct / 100;
+        var xNow = Math.round(uNow * 4000) / 10;
+        var yNow = Math.round(getCurveYAtU(uNow) * 10) / 10;
+
+        var colTextClass = function (colIdx, isTopCol) {
+          if (m.activeCol === colIdx) {
+            return isTopCol ? 'text-emerald-800 font-bold' : 'text-rose-900 font-bold';
+          }
+          return 'text-slate-800 font-semibold';
+        };
+
+        var colSubClass = function (colIdx, isTopCol) {
+          if (m.activeCol === colIdx) {
+            return isTopCol ? 'text-emerald-700 font-bold' : 'text-rose-800 font-bold';
+          }
+          return 'text-slate-400 font-medium';
+        };
+
+        return (
+          '<div class="bg-white border border-slate-100 rounded-2xl p-4 sm:p-5 shadow-sm">' +
+            '<div class="flex items-center justify-between mb-2">' +
+              '<h3 class="text-base sm:text-lg font-bold text-slate-800 tracking-tight">Rijpingsfase</h3>' +
+              '<span class="text-[11px] font-medium text-slate-500">' + escapeHtml(w.wineAgeIn2026 || '') + '</span>' +
+            '</div>' +
+
+            '<div class="relative w-full h-44 sm:h-48 select-none">' +
+              '<svg viewBox="0 0 400 165" class="w-full h-full overflow-visible">' +
+                '<defs>' +
+                  '<linearGradient id="phaseFillGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
+                    '<stop offset="0%" stop-color="#64748B" />' +
+                    '<stop offset="23%" stop-color="#64748B" />' +
+                    '<stop offset="35%" stop-color="#10B981" />' +
+                    '<stop offset="70%" stop-color="#059669" />' +
+                    '<stop offset="82%" stop-color="#D97706" />' +
+                    '<stop offset="100%" stop-color="#B45309" />' +
+                  '</linearGradient>' +
+                  '<linearGradient id="phaseStrokeGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
+                    '<stop offset="0%" stop-color="#64748B" />' +
+                    '<stop offset="23%" stop-color="#475569" />' +
+                    '<stop offset="35%" stop-color="#059669" />' +
+                    '<stop offset="70%" stop-color="#047857" />' +
+                    '<stop offset="82%" stop-color="#B45309" />' +
+                    '<stop offset="100%" stop-color="#92400E" />' +
+                  '</linearGradient>' +
+                  '<linearGradient id="verticalFade" x1="0%" y1="0%" x2="0%" y2="100%">' +
+                    '<stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.58" />' +
+                    '<stop offset="65%" stop-color="#FFFFFF" stop-opacity="0.24" />' +
+                    '<stop offset="98%" stop-color="#FFFFFF" stop-opacity="0.0" />' +
+                  '</linearGradient>' +
+                  '<mask id="curveVerticalMask">' +
+                    '<rect x="0" y="0" width="400" height="160" fill="url(#verticalFade)" />' +
+                  '</mask>' +
+                '</defs>' +
+
+                '<line x1="0" y1="18" x2="400" y2="18" stroke="#F1F5F9" stroke-width="1" />' +
+                '<line x1="0" y1="64" x2="400" y2="64" stroke="#F1F5F9" stroke-width="1" />' +
+                '<line x1="0" y1="110" x2="400" y2="110" stroke="#F1F5F9" stroke-width="1" />' +
+                '<line x1="0" y1="154" x2="400" y2="154" stroke="#E2E8F0" stroke-width="1.25" />' +
+
+                '<line x1="100" y1="18" x2="100" y2="154" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3" />' +
+                '<line x1="200" y1="18" x2="200" y2="154" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3" />' +
+                '<line x1="300" y1="18" x2="300" y2="154" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3" />' +
+
+                '<path d="' + paths.areaPath + '" fill="url(#phaseFillGrad)" mask="url(#curveVerticalMask)" />' +
+                '<path d="' + paths.strokePath + '" fill="none" stroke="url(#phaseStrokeGrad)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />' +
+
+                '<line x1="' + xNow + '" y1="8" x2="' + xNow + '" y2="154" stroke="#881337" stroke-width="2.2" />' +
+                '<circle cx="' + xNow + '" cy="' + yNow + '" r="6.5" fill="#881337" fill-opacity="0.18" />' +
+                '<circle cx="' + xNow + '" cy="' + yNow + '" r="4.2" fill="#FFFFFF" stroke="#881337" stroke-width="2.4" />' +
+              '</svg>' +
+
+              '<div class="absolute top-0 -translate-x-1/2 pointer-events-none" style="left:' + m.linePct + '%">' +
+                '<span class="px-1.5 py-0.5 rounded bg-rose-900 text-white font-mono-num font-bold text-[10px] shadow-sm whitespace-nowrap">' + CURRENT_YEAR + '</span>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="grid grid-cols-4 gap-1 pt-3 text-center">' +
+              '<div>' +
+                '<div class="text-xs sm:text-sm ' + colTextClass(1, false) + '">' + escapeHtml(m.col1Years) + '</div>' +
+                '<div class="text-xs sm:text-sm ' + colSubClass(1, false) + ' mt-0.5">Jong</div>' +
+                '<div class="text-[10px] font-mono-num text-slate-400 mt-0.5">' + escapeHtml(m.col1Cal) + '</div>' +
+              '</div>' +
+              '<div>' +
+                '<div class="text-xs sm:text-sm ' + colTextClass(2, false) + '">' + escapeHtml(m.col2Years) + '</div>' +
+                '<div class="text-xs sm:text-sm ' + colSubClass(2, false) + ' mt-0.5">Op dronk</div>' +
+                '<div class="text-[10px] font-mono-num text-slate-400 mt-0.5">' + escapeHtml(m.col2Cal) + '</div>' +
+              '</div>' +
+              '<div>' +
+                '<div class="text-xs sm:text-sm ' + colTextClass(3, true) + '">' + escapeHtml(m.col3Years) + '</div>' +
+                '<div class="text-xs sm:text-sm ' + colSubClass(3, true) + ' mt-0.5">Top</div>' +
+                '<div class="text-[10px] font-mono-num text-emerald-700 font-semibold mt-0.5">' + escapeHtml(m.col3Cal) + '</div>' +
+              '</div>' +
+              '<div>' +
+                '<div class="text-xs sm:text-sm ' + colTextClass(4, false) + '">' + escapeHtml(m.col4Years) + '</div>' +
+                '<div class="text-xs sm:text-sm ' + colSubClass(4, false) + ' mt-0.5">Afbouw</div>' +
+                '<div class="text-[10px] font-mono-num text-slate-400 mt-0.5">' + escapeHtml(m.col4Cal) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      // ==========================================
+      // 6. DOSSIER WEERGAVE & DIRECTE LINKS
+      // ==========================================
+      function renderDossierView(w) {
+        var output = document.getElementById('dossierOutput');
+        var badge = document.getElementById('dossierBadge');
+        if (!output || !w) return;
+        if (badge) badge.classList.remove('hidden');
+
+        var m = computeMaturationData(w);
+
+        var blendArr = Array.isArray(w.grapeBlend) ? w.grapeBlend : [];
+        var blendBar = '';
+        var blendRows = '';
+        var colors = ['bg-rose-800', 'bg-emerald-600', 'bg-amber-600', 'bg-slate-600'];
+        for (var i = 0; i < blendArr.length; i++) {
+          var g = blendArr[i] || {};
+          var pctVal = Math.max(0, Math.min(100, Number(g.percentage) || 0));
+          blendBar += '<div style="width:' + pctVal + '%" class="' + colors[i % colors.length] + ' h-full"></div>';
+          blendRows += '<div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-200"><span class="text-xs font-semibold">' + escapeHtml(g.grape) + '</span><span class="text-xs font-mono-num font-bold text-rose-800">' + pctVal + '%</span></div>';
+        }
+
+        var classics = Array.isArray(w.classicPairings) ? w.classicPairings : [];
+        var classicsHtml = '';
+        for (var c = 0; c < classics.length; c++) {
+          var cp = classics[c] || {};
+          classicsHtml +=
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<h4 class="font-bold text-sm text-slate-900">' + escapeHtml(cp.dish) + '</h4>' +
+                '<span class="px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0">Klassiek</span>' +
+              '</div>' +
+              '<p class="text-xs text-slate-600 leading-relaxed">' + escapeHtml(cp.rationale) + '</p>' +
+              (cp.chefsTouch
+                ? '<div class="bg-white border-l-4 border-rose-800 rounded-r-lg p-2.5 text-xs text-slate-800 leading-relaxed">' +
+                    '<strong class="text-rose-800 uppercase tracking-wider text-[10px] block mb-0.5">Chef’s Touch • Aandachtspunt Bereiding</strong>' +
+                    escapeHtml(cp.chefsTouch) +
+                  '</div>'
+                : '') +
+            '</div>';
+        }
+
+        // Gebruik de geverifieerde Google Search Grounding product-URL's (wijzen direct naar de specifieke flespagina)
+        var resolvedLinkData = (w.resolvedShopLinks && w.resolvedProducerLink)
+          ? { shopLinks: w.resolvedShopLinks, producerLink: w.resolvedProducerLink }
+          : extractVerifiedLinksFromGrounding([], [], w, w);
+
+        var shopLinksArr = resolvedLinkData.shopLinks || [];
+        var shopsHtml = '';
+
+        for (var r = 0; r < shopLinksArr.length; r++) {
+          var sItem = shopLinksArr[r] || {};
+          var badgeTxt = sItem.verified ? 'Directe productpagina' : 'Product-zoekopdracht';
+          shopsHtml +=
+            '<div class="flex items-stretch gap-2">' +
+              '<a href="' + escapeHtml(sItem.url) + '" target="_blank" data-ext-url="' + escapeHtml(sItem.url) + '" class="flex-1 flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-left">' +
+                '<div class="min-w-0 pr-2">' +
+                  '<div class="text-xs font-bold text-slate-900 truncate">' + escapeHtml(sItem.shopName || 'Wijnwebwinkel') + (sItem.priceIndication ? ' • ' + escapeHtml(sItem.priceIndication) : '') + '</div>' +
+                  '<div class="text-[10px] font-mono-num text-slate-500 truncate mt-0.5">' + escapeHtml(sItem.domain || '') + ' • ' + escapeHtml(badgeTxt) + '</div>' +
+                '</div>' +
+                '<span class="text-xs font-bold text-rose-800 shrink-0">Open ↗</span>' +
+              '</a>' +
+              '<button type="button" data-copy-url="' + escapeHtml(sItem.url) + '" class="px-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[11px] font-bold text-slate-700 shrink-0">Kopieer</button>' +
+            '</div>';
+        }
+
+        // Voeg de directe Wine-Searcher fles- & jaargangpagina toe (zonder /netherlands redirect-fout)
+        var wsBottleUrl = buildWineSearcherBottleUrl(w);
+        shopsHtml +=
+          '<div class="flex items-stretch gap-2">' +
+            '<a href="' + escapeHtml(wsBottleUrl) + '" target="_blank" data-ext-url="' + escapeHtml(wsBottleUrl) + '" class="flex-1 flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 text-left">' +
+              '<div class="min-w-0 pr-2">' +
+                '<div class="text-xs font-bold text-emerald-950 truncate">Wine-Searcher • ' + escapeHtml(w.wineName || '') + ' ' + escapeHtml(String(w.vintage || 'NV')) + '</div>' +
+                '<div class="text-[10px] font-mono-num text-emerald-800 truncate mt-0.5">wine-searcher.com • Specifieke fles &amp; jaargang prijzen</div>' +
+              '</div>' +
+              '<span class="text-xs font-bold text-emerald-800 shrink-0">Open ↗</span>' +
+            '</a>' +
+            '<button type="button" data-copy-url="' + escapeHtml(wsBottleUrl) + '" class="px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-[11px] font-bold text-emerald-900 shrink-0">Kopieer</button>' +
+          '</div>';
+
+        var prodResolved = resolvedLinkData.producerLink;
+
+        output.innerHTML =
+          '<!-- 1. IDENTIFICATIE, CUVÉE-VERIFICATIE & ACTUELE PRIJS -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div class="flex flex-wrap items-center justify-between gap-2">' +
+              '<div class="flex flex-wrap items-center gap-1.5">' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-rose-800 text-white">' + escapeHtml(w.wineType || 'Rood') + '</span>' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">' + escapeHtml(w.classification) + '</span>' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono-num font-semibold bg-slate-100 text-slate-700 border border-slate-200">Alc. ' + escapeHtml(w.abv) + '</span>' +
+              '</div>' +
+              '<button id="refreshDossierBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 flex items-center gap-1">' +
+                '<span>↻ Ververs prijzen</span>' +
+              '</button>' +
+            '</div>' +
+
+            '<div>' +
+              '<div class="flex items-center gap-2">' +
+                '<span class="text-xs uppercase tracking-widest text-rose-800 font-bold">' + escapeHtml(w.producer) + '</span>' +
+                (appState.dossierFromCache
+                  ? '<span class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700">Uit Cache</span>'
+                  : '<span class="px-2 py-0.5 rounded bg-sky-50 border border-sky-200 text-[10px] font-bold text-sky-800">Geverifieerd</span>') +
+              '</div>' +
+              '<h1 class="text-2xl sm:text-3xl font-serif-title font-bold text-slate-900 leading-tight mt-0.5">' + escapeHtml(w.wineName) + ' <span class="text-rose-800">' + (w.vintage || 'NV') + '</span></h1>' +
+              '<div class="text-xs text-slate-600 mt-1"><strong>' + escapeHtml(w.appellation) + '</strong> • ' + escapeHtml(w.region) + ', ' + escapeHtml(w.country) + '</div>' +
+            '</div>' +
+
+            (w.cuveeHierarchyNote
+              ? '<div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 space-y-1">' +
+                  '<div class="flex items-center justify-between gap-2">' +
+                    '<span class="text-[10px] uppercase tracking-wider font-bold text-amber-800">Cuvée-Verificatie</span>' +
+                    '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[10px]">' + escapeHtml(w.cuveeHierarchyLevel || 'Geverifieerd Label') + '</span>' +
+                  '</div>' +
+                  '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.cuveeHierarchyNote) + '</p>' +
+                '</div>'
+              : '') +
+
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between">' +
+              '<div><span class="text-[10px] uppercase tracking-wider font-bold text-emerald-700 block">Actuele Waarde (75cl incl. btw)</span><span class="text-xs text-slate-600">Nederlandse / Europese marktprijs</span></div>' +
+              '<div class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-right shadow-sm"><span class="font-mono-num font-bold text-base text-slate-900">' + escapeHtml(w.priceRangeEur75clInclVat || '€ --') + '</span></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 2. RIJPINGSFASE (VARIANT 2: DE 3-KLEUREN VERLOOPCURVE) -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div class="flex items-start justify-between gap-2">' +
+              '<div><span class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold block">Bewaarpotentieel &amp; Piek (' + CURRENT_YEAR + ')</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Rijpingsfase &amp; Drinkvenster</h2></div>' +
+              '<span class="px-3 py-1 rounded-full text-[11px] font-bold shrink-0 ' + (m.isSweet ? 'bg-emerald-600 text-white' : 'bg-rose-800 text-white') + '">' + escapeHtml(w.stageBadge2026 || 'Status 2026') + '</span>' +
+            '</div>' +
+
+            renderThreeColorMaturationCurve(w, m) +
+
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">' +
+              '<div class="text-xs font-bold text-rose-800">Advies nu (' + CURRENT_YEAR + '): <span class="text-slate-900">' + escapeHtml(w.recommendationNow) + '</span></div>' +
+              '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.factualStateNow) + '</p>' +
+            '</div>' +
+
+            '<div class="grid grid-cols-3 gap-2 text-xs">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5"><span class="text-[10px] text-slate-500 block">Temperatuur</span><strong>' + escapeHtml(w.servingTemperature || '16–18 °C') + '</strong></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5"><span class="text-[10px] text-slate-500 block">Karafferen</span><strong>' + escapeHtml(w.decantingAdvice2026 || '30–60 min') + '</strong></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5"><span class="text-[10px] text-slate-500 block">Wijnglas</span><strong>' + escapeHtml(w.glasswareAdvice || 'Bordeaux') + '</strong></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 3. PROEFNOTITIE IN STEEKWOORDEN & WSET STRUCTUUR -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-rose-800 font-bold block">Proefnotitie (' + CURRENT_YEAR + ')</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Aroma’s &amp; WSET-Structuur</h2></div>' +
+            '<p class="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-3 leading-relaxed">' + escapeHtml(w.conciseTastingSummary) + '</p>' +
+            '<div class="space-y-2">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[11px] font-bold text-rose-800 mb-1">1. Primair (Fruit &amp; Terroir)</div><div class="flex flex-wrap gap-1.5">' + renderPills(w.primaryTags) + '</div></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[11px] font-bold text-amber-700 mb-1">2. Secundair (Vinificatie &amp; Hout)</div><div class="flex flex-wrap gap-1.5">' + renderPills(w.secondaryTags) + '</div></div>' +
+              '<div class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3"><div class="text-[11px] font-bold text-emerald-800 mb-1">3. Tertiair (Rijping &amp; Evolutie in ' + CURRENT_YEAR + ')</div><div class="flex flex-wrap gap-1.5">' + renderPills(w.tertiaryTags) + '</div><p class="text-[11px] text-slate-700 mt-1">' + escapeHtml(w.tertiaryDevelopmentNote) + '</p></div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Body</span><strong>' + escapeHtml(w.wsetBody) + '</strong></div>' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Tannine/Grip</span><strong>' + escapeHtml(w.wsetTanninsOrGrip) + '</strong></div>' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Zuurgraad</span><strong>' + escapeHtml(w.wsetAcidity) + '</strong></div>' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Zoetheid</span><strong>' + escapeHtml(w.wsetSweetness) + '</strong></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 4. WIJN & SPIJS MET CHEF’S TOUCH -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-rose-800 font-bold block">Gastronomie &amp; Chef’s Touch</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Klassieke &amp; Aziatische Combinaties</h2></div>' +
+            '<div class="space-y-2.5">' + classicsHtml + '</div>' +
+            '<div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<h4 class="font-bold text-sm text-slate-900">' + escapeHtml(w.asianDishName) + '</h4>' +
+                '<span class="px-2 py-0.5 rounded bg-amber-600 text-white font-bold text-[10px] shrink-0">Aziatisch • ' + escapeHtml(w.asianCuisineName || 'Azië') + '</span>' +
+              '</div>' +
+              '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.asianPairingRationale) + '</p>' +
+              (w.asianChefsTouch
+                ? '<div class="bg-white border-l-4 border-amber-600 rounded-r-lg p-2.5 text-xs text-slate-800 leading-relaxed">' +
+                    '<strong class="text-amber-800 uppercase tracking-wider text-[10px] block mb-0.5">Chef’s Touch • Aandachtspunt Bereiding</strong>' +
+                    escapeHtml(w.asianChefsTouch) +
+                  '</div>'
+                : '') +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 5. OOGSTJAAR, CÉPAGES & PRODUCENT -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold block">Wijnhuis, Oogstjaar &amp; Techniek</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Cépages, Oogstjaar &amp; Producent</h2></div>' +
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between gap-3">' +
+              '<div><span class="text-[10px] uppercase tracking-wider font-bold text-rose-800 block">Oogstjaar ' + (w.vintage || 'NV') + ' in ' + escapeHtml(w.region) + '</span><span class="text-xs font-bold text-slate-900">' + escapeHtml(w.vintageQualification || '') + '</span><p class="text-xs text-slate-600 mt-0.5">' + escapeHtml(w.vintageClimateFacts || '') + '</p></div>' +
+              '<div class="px-3 py-2 rounded-xl bg-white border border-slate-200 text-center shrink-0 shadow-sm"><span class="font-mono-num font-bold text-lg text-rose-800">' + (w.vintageScore || '--') + '</span><span class="text-[10px] text-slate-400 block">/100</span></div>' +
+            '</div>' +
+            '<div class="h-2.5 w-full rounded-full overflow-hidden flex bg-slate-100 border border-slate-200">' + blendBar + '</div>' +
+            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">' + blendRows + '</div>' +
+            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><strong class="text-slate-900 block mb-0.5">Terroir &amp; Bodem</strong><span class="text-slate-600">' + escapeHtml(w.terroirFacts || '') + '</span></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><strong class="text-slate-900 block mb-0.5">Vinificatie &amp; Houtrijping</strong><span class="text-slate-600">' + escapeHtml(w.vinificationFacts || '') + '</span></div>' +
+            '</div>' +
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1"><div class="text-[11px] font-bold uppercase text-rose-800">Beschrijving Producent</div><p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.producerStoryCommercial) + '</p></div>' +
+          '</div>' +
+
+          '<!-- 6. DIRECTE WEBWINKELS & PRODUCENT LINKS MET KOPIEER-KNOP -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-rose-800 font-bold block">Directe Links &amp; Prijzen (Geen Vivino)</span><h3 class="text-lg font-serif-title font-bold text-slate-900">Webwinkels &amp; Officiële Producent</h3></div>' +
+            '<div class="space-y-2">' + shopsHtml + '</div>' +
+            '<div class="flex items-stretch gap-2">' +
+              '<a href="' + escapeHtml(prodResolved.url) + '" target="_blank" data-ext-url="' + escapeHtml(prodResolved.url) + '" class="flex-1 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-left flex items-center justify-between">' +
+                '<div class="min-w-0 pr-2">' +
+                  '<div class="font-bold text-xs truncate">Officiële Website Producent</div>' +
+                  '<div class="text-[10px] font-mono-num text-slate-300 truncate mt-0.5">' + escapeHtml(prodResolved.label) + '</div>' +
+                '</div>' +
+                '<span class="text-xs font-bold text-rose-300 shrink-0">Open ↗</span>' +
+              '</a>' +
+              '<button type="button" data-copy-url="' + escapeHtml(prodResolved.url) + '" class="px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-800 shrink-0">Kopieer</button>' +
+            '</div>' +
+            '<div id="linkFallbackBox" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-1.5">' +
+              '<div class="text-[11px] font-bold text-emerald-900">✓ Directe link gekopieerd naar je klembord:</div>' +
+              '<input id="linkFallbackInput" type="text" readonly class="w-full px-2.5 py-1.5 rounded-lg bg-white border border-emerald-300 text-[11px] font-mono-num text-slate-800 select-all" value="" />' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 7. HELEMAAL ONDERAAN: INTERACTIEVE MENU-CHECK & VRAAGBAAK -->' +
+          '<div class="app-card border-2 border-slate-900/10 p-4 sm:p-5 space-y-3">' +
+            '<div>' +
+              '<span class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold block">Sommelier Vraagbaak &amp; Menu-Check</span>' +
+              '<h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Stel nog een vraag over deze wijn</h2>' +
+              '<p class="text-xs text-slate-600 mt-0.5">Vraag welke kaas erbij past of typ een eigen gerecht voor een directe beoordeling met Chef’s Touch.</p>' +
+            '</div>' +
+            '<form id="qaForm" class="flex gap-2">' +
+              '<input id="qaInput" type="text" placeholder="Bijv. Welke kaas past hierbij? of Past dit bij eend?" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-rose-800" />' +
+              '<button type="submit" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shrink-0">Vraag</button>' +
+            '</form>' +
+            '<div id="qaList" class="space-y-2.5 pt-1">' + renderQaHistory() + '</div>' +
+          '</div>';
+
+        // Koppel Ververs prijzen knop
+        var refBtn = document.getElementById('refreshDossierBtn');
+        if (refBtn) {
+          refBtn.onclick = function () {
+            if (appState.lastQueryOpts) {
+              runAnalysis(appState.lastQueryOpts, true);
+            } else if (appState.dossier) {
+              runAnalysis({
+                wineQuery: appState.dossier.producer + ' ' + appState.dossier.wineName,
+                vintage: String(appState.dossier.vintage || ''),
+                region: appState.dossier.region || ''
+              }, true);
+            }
+          };
+        }
+
+        // Koppel alle Kopieer-link knoppen
+        var copyBtns = output.querySelectorAll('button[data-copy-url]');
+        for (var cb = 0; cb < copyBtns.length; cb++) {
+          copyBtns[cb].onclick = function () {
+            var urlToCopy = this.getAttribute('data-copy-url');
+            var btnEl = this;
+            copyTextSilently(urlToCopy);
+            showCopiedUrlBox(urlToCopy);
+            var orig = btnEl.textContent;
+            btnEl.textContent = 'Gekopieerd ✓';
+            setTimeout(function () { btnEl.textContent = orig; }, 2000);
+          };
+        }
+
+        // Koppel externe links
+        var extLinks = output.querySelectorAll('a[data-ext-url]');
+        for (var el = 0; el < extLinks.length; el++) {
+          extLinks[el].onclick = function () {
+            var targetHref = this.getAttribute('data-ext-url');
+            copyTextSilently(targetHref);
+            showCopiedUrlBox(targetHref);
+          };
+        }
+
+        bindQaForm();
+      }
+
+      function showCopiedUrlBox(urlStr) {
+        var fbBox = document.getElementById('linkFallbackBox');
+        var fbInp = document.getElementById('linkFallbackInput');
+        if (fbBox && fbInp) {
+          fbInp.value = urlStr;
+          fbBox.classList.remove('hidden');
+        }
+      }
+
+      function copyTextSilently(str) {
+        if (!str) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(str).catch(function () {});
+        }
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = str;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        } catch (e) {}
+      }
+
+      function renderPills(arr) {
+        if (!Array.isArray(arr)) return '';
+        var h = '';
+        for (var i = 0; i < arr.length; i++) {
+          h += '<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-800">' + escapeHtml(arr[i]) + '</span>';
+        }
+        return h;
+      }
+
+      function renderQaHistory() {
+        if (!appState.qaItems || appState.qaItems.length === 0) return '';
+        var h = '';
+        for (var i = 0; i < appState.qaItems.length; i++) {
+          var item = appState.qaItems[i];
+          if (item.structured) {
+            var verdict = item.structured.verdict || 'Advies';
+            var isPositive = verdict.toLowerCase().indexOf('goede') !== -1 || verdict.toLowerCase().indexOf('uitstekend') !== -1 || verdict.toLowerCase().indexOf('advies') !== -1;
+            var badgeBg = isPositive ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white';
+            h +=
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">' +
+                '<div class="flex items-center justify-between gap-2">' +
+                  '<span class="text-xs font-bold text-slate-900">' + escapeHtml(item.q) + '</span>' +
+                  '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 ' + badgeBg + '">' + escapeHtml(verdict) + '</span>' +
+                '</div>' +
+                '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(item.structured.reasoning || '') + '</p>' +
+                (item.structured.chefsTouch
+                  ? '<div class="bg-white border-l-4 border-emerald-600 rounded-r-lg p-2.5 text-xs text-slate-800 leading-relaxed">' +
+                      '<strong class="text-emerald-800 uppercase tracking-wider text-[10px] block mb-0.5">Chef’s Touch • Aandachtspunt</strong>' +
+                      escapeHtml(item.structured.chefsTouch) +
+                    '</div>'
+                  : '') +
+              '</div>';
+          } else {
+            h += '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1"><div class="text-xs font-bold text-slate-900">Vraag: ' + escapeHtml(item.q) + '</div><p class="text-xs text-slate-700">' + escapeHtml(item.a) + '</p></div>';
+          }
+        }
+        return h;
+      }
+
+      function bindQaForm() {
+        var form = document.getElementById('qaForm');
+        if (!form) return;
+        form.onsubmit = async function (e) {
+          e.preventDefault();
+          var inp = document.getElementById('qaInput');
+          var q = inp ? inp.value.trim() : '';
+          if (!q || !appState.dossier) return;
+          inp.value = '';
+          setBusy(true);
+          try {
+            var d = appState.dossier;
+            var menuCheckPrompt =
+              'Je bent een Master of Wine en gastronomisch adviseur. De gebruiker stelt een vraag over de wijn: ' +
+              d.producer + ' ' + d.wineName + ' (' + (d.vintage || 'NV') + ', ' + d.wineType + ', Body: ' + d.wsetBody + ', Tannine/Grip: ' + d.wsetTanninsOrGrip + ', Zuren: ' + d.wsetAcidity + ').\n' +
+              'Vraag van gebruiker: "' + q + '"\n' +
+              'Antwoord UITSLUITEND met één geldig JSON-object zonder extra tekst:\n' +
+              '{\n' +
+              '  "verdict": "Goede match", "Let op" of "Sommelier Advies",\n' +
+              '  "reasoning": "Korte, feitelijke uitleg in maximaal 2 zinnen over smaakbalans, zuren, tannines of kaas/gerecht.",\n' +
+              '  "chefsTouch": "Eén concrete keukentip of serveeraanpassing om de combinatie met deze wijn optimaal te laten slagen."\n' +
+              '}';
+
+            var resp = await callGeminiApi({
+              contents: [{ role: 'user', parts: [{ text: menuCheckPrompt }] }],
+              generationConfig: { temperature: 0.1, responseMimeType: 'application/json' }
+            }, false);
+
+            var parsed = null;
+            try {
+              parsed = parseJsonSafely(resp.text);
+            } catch (parseErr) {
+              parsed = null;
+            }
+
+            if (parsed && parsed.reasoning) {
+              appState.qaItems.unshift({ q: q, structured: parsed });
+            } else {
+              appState.qaItems.unshift({ q: q, a: String(resp.text || '').trim() });
+            }
+            var list = document.getElementById('qaList');
+            if (list) list.innerHTML = renderQaHistory();
+          } catch (err) {
+            showMsg('Kon de vraag niet beantwoorden.');
+          } finally {
+            setBusy(false);
+          }
+        };
+      }
+
+      function switchTab(tab) {
+        appState.activeTab = tab;
+        var s1 = document.getElementById('screenScanner');
+        var s2 = document.getElementById('screenDossier');
+        var bScan = document.getElementById('navScanBtn');
+        var bDos = document.getElementById('navDossierBtn');
+
+        if (tab === 'scanner') {
+          if (s1) s1.classList.remove('hidden');
+          if (s2) s2.classList.add('hidden');
+          if (bScan) { bScan.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-800 text-white font-bold text-xs shadow-sm'; }
+          if (bDos) { bDos.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs relative'; }
+        } else {
+          if (s1) s1.classList.add('hidden');
+          if (s2) s2.classList.remove('hidden');
+          if (bScan) { bScan.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs'; }
+          if (bDos) { bDos.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-800 text-white font-bold text-xs shadow-sm relative'; }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      function init() {
+        setupPwaManifest();
+        renderRecentCacheList();
+
+        var cam = document.getElementById('cameraInput');
+        var gal = document.getElementById('galleryInput');
+        if (cam) {
+          cam.onchange = function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (file) handleFileSelected(file);
+            e.target.value = '';
+          };
+        }
+        if (gal) {
+          gal.onchange = function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (file) handleFileSelected(file);
+            e.target.value = '';
+          };
+        }
+
+        var txtForm = document.getElementById('textInputForm');
+        if (txtForm) {
+          txtForm.onsubmit = function (e) {
+            e.preventDefault();
+            var n = document.getElementById('txtWineName').value.trim();
+            var v = document.getElementById('txtVintage').value.trim();
+            var r = document.getElementById('txtRegion').value.trim();
+            if (!n) { showMsg('Vul de wijnnaam in.'); return; }
+            runAnalysis({ wineQuery: n, vintage: v, region: r }, false);
+          };
+        }
+
+        var clr = document.getElementById('clearPhotoBtn');
+        if (clr) {
+          clr.onclick = function () {
+            appState.currentPhoto = null;
+            document.getElementById('photoPreviewCard').classList.add('hidden');
+          };
+        }
+
+        var ana = document.getElementById('analyzePhotoBtn');
+        if (ana) {
+          ana.onclick = function () {
+            if (appState.currentPhoto) runAnalysis({ base64Image: appState.currentPhoto.base64, mimeType: appState.currentPhoto.mime }, true);
+          };
+        }
+
+        var clrCache = document.getElementById('clearCacheBtn');
+        if (clrCache) {
+          clrCache.onclick = function () {
+            appState.cache = {};
+            saveCache();
+          };
+        }
+
+        var navScan = document.getElementById('navScanBtn');
+        var navDos = document.getElementById('navDossierBtn');
+        var home = document.getElementById('brandHomeBtn');
+        if (navScan) navScan.onclick = function () { switchTab('scanner'); };
+        if (navDos) navDos.onclick = function () { switchTab('dossier'); };
+        if (home) home.onclick = function () { switchTab('scanner'); };
+        var banClose = document.getElementById('statusBannerClose');
+        if (banClose) banClose.onclick = hideMsg;
+
+        updateApiKeyBadge();
+        var keyBtn = document.getElementById('apiKeyModalBtn');
+        var keyModal = document.getElementById('apiKeyModal');
+        var closeKeyModal = document.getElementById('closeApiKeyModal');
+        var keyInput = document.getElementById('customApiKeyInput');
+        var saveKeyBtn = document.getElementById('saveApiKeyBtn');
+        var clearKeyBtn = document.getElementById('clearApiKeyBtn');
+
+        if (keyBtn && keyModal) {
+          keyBtn.onclick = function () {
+            if (keyInput) keyInput.value = appState.customApiKey || '';
+            keyModal.classList.remove('hidden');
+          };
+        }
+        if (closeKeyModal && keyModal) {
+          closeKeyModal.onclick = function () { keyModal.classList.add('hidden'); };
+        }
+        if (saveKeyBtn && keyModal) {
+          saveKeyBtn.onclick = function () {
+            var val = keyInput ? keyInput.value.trim() : '';
+            appState.customApiKey = val;
+            try { localStorage.setItem(API_KEY_STORAGE, val); } catch (e) {}
+            updateApiKeyBadge();
+            keyModal.classList.add('hidden');
+          };
+        }
+        if (clearKeyBtn && keyModal) {
+          clearKeyBtn.onclick = function () {
+            appState.customApiKey = '';
+            if (keyInput) keyInput.value = '';
+            try { localStorage.removeItem(API_KEY_STORAGE, ''); } catch (e) {}
+            updateApiKeyBadge();
+            keyModal.classList.add('hidden');
+          };
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
+```

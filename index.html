@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Winelabel Sommelier" />
-  <title>Winelabel Sommelier v2.4 — Feitelijk Producent &amp; Expert Dossier</title>
+  <title>Winelabel Sommelier v2.6 — Feitelijk Producent &amp; Expert Dossier</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -48,22 +48,39 @@
       border-radius: 1.15rem;
       box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.06);
     }
-    .file-input-wrapper {
+    .photo-picker-label {
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       overflow: hidden;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
     }
-    .file-input-wrapper input[type="file"] {
+    .photo-picker-label input[type="file"] {
       position: absolute;
       top: 0;
+      left: 0;
       right: 0;
-      min-width: 100%;
-      min-height: 100%;
-      font-size: 999px;
-      text-align: right;
-      opacity: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.001;
       cursor: pointer;
-      z-index: 20;
+      z-index: 40;
+      margin: 0;
+      padding: 0;
+    }
+    /* Voorkom automatisch inzoomen op mobiele browsers bij aantikken van tekstvelden */
+    @media (max-width: 640px) {
+      input[type="text"],
+      input[type="password"],
+      input[type="search"],
+      textarea {
+        font-size: 16px !important;
+      }
     }
     @keyframes spinSlow {
       to { transform: rotate(360deg); }
@@ -81,8 +98,8 @@
 <body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-24">
 
   <!-- TOPBALK -->
-  <header class="sticky top-0 z-30 h-14 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 flex items-center justify-between">
-    <button id="brandHomeBtn" type="button" class="flex items-center gap-2.5 text-left focus:outline-none">
+  <header class="sticky top-0 z-30 min-h-[3.5rem] py-2 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-4 flex items-center justify-between gap-2">
+    <button id="brandHomeBtn" type="button" class="flex items-center gap-2 text-left focus:outline-none min-w-0 flex-1">
       <div class="w-8 h-8 rounded-xl bg-rose-900 text-white flex items-center justify-center shrink-0 shadow-sm">
         <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M8 22h8"></path>
@@ -91,26 +108,26 @@
           <path d="M7.5 7.5h9"></path>
         </svg>
       </div>
-      <div>
-        <div class="flex items-center gap-1.5">
-          <span class="font-serif-title font-bold text-lg tracking-tight text-slate-900 leading-none">
+      <div class="min-w-0 flex-1">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="font-serif-title font-bold text-base sm:text-lg tracking-tight text-slate-900 leading-none truncate">
             Winelabel <span class="text-rose-800">Sommelier</span>
           </span>
-          <span class="px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[9px] font-mono-num font-bold text-emerald-800">v2.4</span>
+          <span class="px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[9px] font-mono-num font-bold text-emerald-800 shrink-0">v2.6</span>
         </div>
-        <span class="text-[10px] text-slate-500 font-semibold tracking-wider uppercase block mt-0.5">
+        <span class="text-[9px] sm:text-[10px] text-slate-500 font-semibold tracking-wider uppercase block mt-0.5 truncate">
           Producent • Vakpers • Rijping • 2026
         </span>
       </div>
     </button>
-    <div class="flex items-center gap-1.5">
-      <button id="shareAppModalBtn" type="button" class="px-2.5 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-[10px] font-bold text-rose-900 flex items-center gap-1" title="Deel deze app met vrienden zodat zij geen API-sleutel nodig hebben">
-        <svg class="w-3 h-3 text-rose-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+    <div class="flex items-center gap-1.5 shrink-0">
+      <button id="shareAppModalBtn" type="button" class="px-2.5 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-[10px] font-bold text-rose-900 flex items-center gap-1 shrink-0" title="Deel deze app met vrienden zodat zij geen API-sleutel nodig hebben">
+        <svg class="w-3 h-3 text-rose-800 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
         <span>Delen</span>
       </button>
-      <button id="apiKeyModalBtn" type="button" class="px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 flex items-center gap-1" title="Beheer verbinding &amp; deelbare toegang">
-        <svg class="w-3 h-3 text-rose-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
-        <span id="apiKeyStatusText">Instellingen</span>
+      <button id="apiKeyModalBtn" type="button" class="px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 flex items-center gap-1 shrink-0" title="Beheer verbinding &amp; deelbare toegang">
+        <svg class="w-3 h-3 text-rose-800 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+        <span id="apiKeyStatusText">Sleutel</span>
       </button>
     </div>
   </header>
@@ -185,9 +202,9 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <!-- Galerij Bestandsknop -->
-          <div class="file-input-wrapper py-3.5 px-3.5 rounded-xl bg-rose-800 hover:bg-rose-900 text-white shadow-sm flex items-center justify-between gap-3">
-            <input type="file" id="galleryInput" accept="image/*" />
+          <!-- Galerij Bestandsknop (Native Label + Directe inline onchange) -->
+          <label for="galleryInput" class="photo-picker-label py-3.5 px-3.5 rounded-xl bg-rose-800 active:bg-rose-950 hover:bg-rose-900 text-white shadow-sm gap-3">
+            <input type="file" id="galleryInput" accept="image/*" onchange="window.__handleWinePhoto && window.__handleWinePhoto(this)" />
             <div class="flex items-center gap-3 min-w-0 pointer-events-none">
               <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -202,11 +219,11 @@
               </div>
             </div>
             <svg class="w-4 h-4 text-rose-100 shrink-0 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </div>
+          </label>
 
-          <!-- Directe Camera Knop -->
-          <div class="file-input-wrapper py-3.5 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-900 shadow-sm flex items-center justify-between gap-3">
-            <input type="file" id="cameraInput" accept="image/*" capture="environment" />
+          <!-- Directe Camera Knop (Native Label + Directe inline onchange) -->
+          <label for="cameraInput" class="photo-picker-label py-3.5 px-3.5 rounded-xl bg-slate-100 active:bg-slate-300 hover:bg-slate-200 border border-slate-200 text-slate-900 shadow-sm gap-3">
+            <input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="window.__handleWinePhoto && window.__handleWinePhoto(this)" />
             <div class="flex items-center gap-3 min-w-0 pointer-events-none">
               <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5 text-rose-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -219,7 +236,7 @@
               </div>
             </div>
             <svg class="w-4 h-4 text-rose-800 shrink-0 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </div>
+          </label>
         </div>
       </div>
 
@@ -309,8 +326,8 @@
   <div id="loadingModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-5">
     <div class="bg-white border border-slate-200 rounded-2xl p-6 max-w-xs w-full text-center shadow-xl space-y-3">
       <div class="spinner-ring mx-auto"></div>
-      <h3 class="text-lg font-serif-title font-bold text-slate-900">Snel Dossier Opbouwen...</h3>
-      <p class="text-xs text-slate-600 leading-relaxed">Producentdata, vakbronnen, rijpingscurve, Chef’s Touch en waardebepaling worden geanalyseerd (2026).</p>
+      <h3 id="loadingTitle" class="text-lg font-serif-title font-bold text-slate-900">Snel Dossier Opbouwen...</h3>
+      <p id="loadingSubtext" class="text-xs text-slate-600 leading-relaxed">Producentdata, vakbronnen, rijpingscurve, Chef’s Touch en waardebepaling worden geanalyseerd (2026).</p>
     </div>
   </div>
 
@@ -319,7 +336,7 @@
       'use strict';
 
       var CURRENT_YEAR = 2026;
-      var STORAGE_KEY = 'winelabel_sommelier_cache_v24';
+      var STORAGE_KEY = 'winelabel_sommelier_cache_v25';
       var API_KEY_STORAGE = 'vino_dossier_custom_api_key';
       var GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-3-flash-preview', 'gemini-2.5-flash-preview-09-2025'];
       var XOR_SALT = 'WinelabelSommelier2026';
@@ -352,3 +369,1336 @@
       function decodeKeyFromShare(encodedStr) {
         try {
           var b64 = String(encodedStr || '').replace(/-/g, '+').replace(/_/g, '/');
+          while (b64.length % 4) b64 += '=';
+          var raw = atob(b64);
+          var out = [];
+          for (var i = 0; i < raw.length; i++) {
+            var c = raw.charCodeAt(i) ^ XOR_SALT.charCodeAt(i % XOR_SALT.length);
+            out.push(String.fromCharCode(c));
+          }
+          var result = out.join('').trim();
+          if (result.indexOf('AIza') === 0) return result;
+        } catch (e) {}
+        return '';
+      }
+
+      function checkUrlForSharedAccess() {
+        try {
+          var hash = window.location.hash || '';
+          var search = window.location.search || '';
+          var match = hash.match(/[?#&]k=([A-Za-z0-9_-]+)/) || search.match(/[?&]k=([A-Za-z0-9_-]+)/);
+          if (match && match[1]) {
+            var decoded = decodeKeyFromShare(match[1]);
+            if (decoded) {
+              appState.customApiKey = decoded;
+              localStorage.setItem(API_KEY_STORAGE, decoded);
+              if (window.history && window.history.replaceState) {
+                var cleanUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+              }
+            }
+          }
+        } catch (e) {}
+      }
+
+      // ==========================================
+      // 2. PWA MANIFEST & STANDALONE APP ICOON
+      // ==========================================
+      function setupPwaManifest() {
+        try {
+          var iconSvg =
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">' +
+              '<rect width="512" height="512" rx="116" fill="#881337"/>' +
+              '<g transform="translate(116, 96) scale(11.6)" fill="none" stroke="#FFFFFF" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M8 22h8"/>' +
+                '<path d="M12 15v7"/>' +
+                '<path d="M12 15a5 5 0 0 0 5-5c0-2-.5-4-2-8H9c-1.5 4-2 6-2 8a5 5 0 0 0 5 5Z"/>' +
+                '<path d="M7.5 7.5h9"/>' +
+              '</g>' +
+            '</svg>';
+          var iconUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(iconSvg);
+
+          var linkIcon = document.createElement('link');
+          linkIcon.rel = 'icon';
+          linkIcon.type = 'image/svg+xml';
+          linkIcon.href = iconUrl;
+          document.head.appendChild(linkIcon);
+
+          var appleIcon = document.createElement('link');
+          appleIcon.rel = 'apple-touch-icon';
+          appleIcon.href = iconUrl;
+          document.head.appendChild(appleIcon);
+
+          var manifestObj = {
+            name: 'Winelabel Sommelier',
+            short_name: 'Winelabel',
+            description: 'Feitelijk wijnlabel dossier, producentdata en rijpingspotentieel',
+            start_url: window.location.href.split('#')[0],
+            display: 'standalone',
+            background_color: '#F8FAFC',
+            theme_color: '#881337',
+            orientation: 'portrait',
+            icons: [
+              { src: iconUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+              { src: iconUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+            ]
+          };
+          var blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+          var manifestLink = document.createElement('link');
+          manifestLink.rel = 'manifest';
+          manifestLink.href = URL.createObjectURL(blob);
+          document.head.appendChild(manifestLink);
+        } catch (e) {}
+      }
+
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) appState.cache = JSON.parse(saved) || {};
+        var savedKey = localStorage.getItem(API_KEY_STORAGE);
+        if (savedKey) appState.customApiKey = savedKey.trim();
+      } catch (e) {}
+
+      checkUrlForSharedAccess();
+
+      function saveCache() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.cache)); } catch (e) {}
+        renderRecentCacheList();
+      }
+
+      function updateApiKeyBadge() {
+        var lbl = document.getElementById('apiKeyStatusText');
+        if (lbl) {
+          lbl.textContent = appState.customApiKey ? 'Actief ✓' : 'Sleutel';
+        }
+      }
+
+      function showMsg(msg) {
+        var box = document.getElementById('statusBanner');
+        var txt = document.getElementById('statusBannerMsg');
+        if (box && txt) {
+          txt.textContent = msg;
+          box.classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      function hideMsg() {
+        var box = document.getElementById('statusBanner');
+        if (box) box.classList.add('hidden');
+      }
+
+      function setBusy(isBusy, customTitle, customSub) {
+        var m = document.getElementById('loadingModal');
+        var t = document.getElementById('loadingTitle');
+        var s = document.getElementById('loadingSubtext');
+        if (t) t.textContent = customTitle || 'Snel Dossier Opbouwen...';
+        if (s) s.textContent = customSub || 'Producentdata, vakbronnen, rijpingscurve, Chef’s Touch en waardebepaling worden geanalyseerd (2026).';
+        if (m) {
+          if (isBusy) m.classList.remove('hidden');
+          else m.classList.add('hidden');
+        }
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function makeKey(p, w, v) {
+        var t = (String(p || '') + ' ' + String(w || '')).toLowerCase().replace(/[^a-z0-9]/g, '');
+        var yr = String(v || 'nv').replace(/[^0-9]/g, '');
+        return t + '_' + (yr || 'nv');
+      }
+
+      function parseJsonSafely(txt) {
+        var s = String(txt || '').trim();
+        var st = s.indexOf('{');
+        var en = s.lastIndexOf('}');
+        if (st !== -1 && en > st) s = s.substring(st, en + 1);
+        return JSON.parse(s);
+      }
+
+      function getCleanBottleSearchPhrase(w, includeVintage) {
+        var prod = String(w.producer || '').trim();
+        var name = String(w.wineName || '').trim();
+        var yr = (includeVintage && w.vintage && Number(w.vintage) > 1900) ? String(w.vintage) : '';
+        var combined = prod;
+        if (name && name.toLowerCase().indexOf(prod.toLowerCase()) === -1) {
+          combined = (prod ? prod + ' ' : '') + name;
+        } else if (name) {
+          combined = name;
+        }
+        if (yr) combined += ' ' + yr;
+        return combined.trim();
+      }
+
+      // ==========================================
+      // 4. FOTO VERWERKING & COMPRESSIE (MOBIEL-VEILIG)
+      // ==========================================
+      function handleFileSelected(file, inputElement) {
+        if (!file) return;
+        hideMsg();
+        setBusy(true, 'Etiket Foto Inlezen...', 'De afbeelding wordt geoptimaliseerd voor snelle herkenning.');
+
+        function resetInputSafely() {
+          if (inputElement) {
+            try { inputElement.value = ''; } catch (e) {}
+          }
+        }
+
+        function processLoadedImage(img, fallbackDataUrl) {
+          try {
+            var max = 768;
+            var w = img.naturalWidth || img.width || 768;
+            var h = img.naturalHeight || img.height || 768;
+            if (w > h && w > max) {
+              h = Math.round((h * max) / w);
+              w = max;
+            } else if (h > max) {
+              w = Math.round((w * max) / h);
+              h = max;
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            var compressed = canvas.toDataURL('image/jpeg', 0.76);
+            var b64 = compressed.split(',')[1];
+
+            resetInputSafely();
+            appState.currentPhoto = { dataUrl: compressed, base64: b64, mime: 'image/jpeg' };
+            var prevImg = document.getElementById('previewImg');
+            var prevCard = document.getElementById('photoPreviewCard');
+            if (prevImg) prevImg.src = compressed;
+            if (prevCard) prevCard.classList.remove('hidden');
+
+            runAnalysis({ base64Image: b64, mimeType: 'image/jpeg' }, false);
+          } catch (err) {
+            resetInputSafely();
+            if (fallbackDataUrl && fallbackDataUrl.indexOf(',') !== -1) {
+              var rawB64 = fallbackDataUrl.split(',')[1];
+              var rawMime = (file && file.type) ? file.type : 'image/jpeg';
+              appState.currentPhoto = { dataUrl: fallbackDataUrl, base64: rawB64, mime: rawMime };
+              var prevImg2 = document.getElementById('previewImg');
+              var prevCard2 = document.getElementById('photoPreviewCard');
+              if (prevImg2) prevImg2.src = fallbackDataUrl;
+              if (prevCard2) prevCard2.classList.remove('hidden');
+              runAnalysis({ base64Image: rawB64, mimeType: rawMime }, false);
+            } else {
+              setBusy(false);
+              showMsg('Fout bij verwerken foto: ' + err.message);
+            }
+          }
+        }
+
+        var reader = new FileReader();
+        reader.onerror = function () {
+          resetInputSafely();
+          setBusy(false);
+          showMsg('Kon de foto niet inlezen vanaf het toestel. Probeer een andere foto.');
+        };
+        reader.onload = function (e) {
+          var dataUrl = e.target.result;
+          var img = new Image();
+          img.onload = function () {
+            processLoadedImage(img, dataUrl);
+          };
+          img.onerror = function () {
+            // Als het toestel bijv. HEIC teruggeeft die niet op canvas getekend kan worden, stuur direct door
+            resetInputSafely();
+            if (dataUrl && dataUrl.indexOf(',') !== -1) {
+              var rawB64 = dataUrl.split(',')[1];
+              var rawMime = (file && file.type) ? file.type : 'image/jpeg';
+              appState.currentPhoto = { dataUrl: dataUrl, base64: rawB64, mime: rawMime };
+              var prevCard = document.getElementById('photoPreviewCard');
+              if (prevCard) prevCard.classList.remove('hidden');
+              runAnalysis({ base64Image: rawB64, mimeType: rawMime }, false);
+            } else {
+              setBusy(false);
+              showMsg('Dit afbeeldingsformaat wordt niet ondersteund door je browser.');
+            }
+          };
+          img.src = dataUrl;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Globale directe handler zodat de inline onchange op <input type="file"> altijd direct vuurt
+      window.__handleWinePhoto = function (inputEl) {
+        if (!inputEl || !inputEl.files || !inputEl.files[0]) return;
+        handleFileSelected(inputEl.files[0], inputEl);
+      };
+
+      // ==========================================
+      // 5. SNELLE AI ENGINE (INCL. SLEUTELLOZE FOTO-VISION FALLBACK)
+      // ==========================================
+      async function callKeylessOpenFallback(systemText, userText, imagePart) {
+        var userContent = userText;
+        if (imagePart && imagePart.data) {
+          var mime = imagePart.mimeType || 'image/jpeg';
+          userContent = [
+            { type: 'text', text: userText },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'data:' + mime + ';base64,' + imagePart.data
+              }
+            }
+          ];
+        }
+
+        var res = await fetch('https://text.pollinations.ai/openai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'openai',
+            temperature: 0.1,
+            response_format: { type: 'json_object' },
+            messages: [
+              { role: 'system', content: systemText },
+              { role: 'user', content: userContent }
+            ]
+          })
+        });
+        if (!res.ok) throw new Error('Open analyse-service tijdelijk niet bereikbaar (' + res.status + ')');
+        var data = await res.json();
+        var content = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+        if (!content) throw new Error('Leeg antwoord ontvangen bij etiket-analyse.');
+        return { text: content };
+      }
+
+      async function callGeminiApi(payload) {
+        var apiKey = appState.customApiKey || '';
+        var lastErr = null;
+        var firstParts = (payload && payload.contents && payload.contents[0] && payload.contents[0].parts) || [];
+        var imagePartObj = null;
+        var usrTxt = '';
+        for (var k = 0; k < firstParts.length; k++) {
+          if (firstParts[k].inlineData) imagePartObj = firstParts[k].inlineData;
+          if (firstParts[k].text) usrTxt += (usrTxt ? '\n' : '') + firstParts[k].text;
+        }
+        var sysTxt = (payload && payload.systemInstruction && payload.systemInstruction.parts && payload.systemInstruction.parts[0] && payload.systemInstruction.parts[0].text) || '';
+
+        for (var i = 0; i < GEMINI_MODELS.length; i++) {
+          var modelName = GEMINI_MODELS[i];
+          var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent?key=' + encodeURIComponent(apiKey);
+          try {
+            var res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            // Als JSON-mode met afbeelding op een endpoint een 400 geeft, probeer direct zonder responseMimeType
+            if (!res.ok && imagePartObj) {
+              var fallbackPayload = {
+                contents: payload.contents,
+                systemInstruction: payload.systemInstruction,
+                generationConfig: { temperature: 0.1 }
+              };
+              res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(fallbackPayload)
+              });
+            }
+
+            if (!res.ok) continue;
+            var data = await res.json();
+            var cand = data && data.candidates && data.candidates[0];
+            var parts = cand && cand.content && cand.content.parts;
+            var textOut = '';
+            if (Array.isArray(parts)) {
+              for (var p = 0; p < parts.length; p++) {
+                if (parts[p].text) textOut += parts[p].text;
+              }
+            }
+            if (textOut) {
+              return { text: textOut };
+            }
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+
+        // Sleutelloze fallback voor zowel tekst als foto-scans (zodat GitHub Pages ook zonder sleutel foto's scant)
+        try {
+          return await callKeylessOpenFallback(sysTxt, usrTxt, imagePartObj);
+        } catch (fallbackErr) {
+          throw lastErr || fallbackErr || new Error('Kon het wijnlabel niet analyseren. Controleer je internetverbinding of stel rechtsboven een API-sleutel in.');
+        }
+      }
+
+      async function runAnalysis(opts, forceRefresh) {
+        appState.lastQueryOpts = opts;
+        hideMsg();
+
+        if (!forceRefresh && !opts.base64Image && opts.wineQuery) {
+          var cached = findCachedDossier(opts.wineQuery, opts.vintage);
+          if (cached) {
+            appState.dossier = cached;
+            appState.dossierFromCache = true;
+            appState.qaItems = [];
+            renderDossierView(appState.dossier);
+            switchTab('dossier');
+            return;
+          }
+        }
+
+        setBusy(
+          true,
+          opts.base64Image ? 'Etiket Analyseren...' : 'Snel Dossier Opbouwen...',
+          'Producentdata, vakbronnen, rijpingscurve, Chef’s Touch en waardebepaling worden opgehaald (2026).'
+        );
+
+        try {
+          var sysPrompt =
+            'Je bent een Master of Wine (MW) en Senior Hoofdsommelier in het jaar ' + CURRENT_YEAR + '. ' +
+            'Stel een 100% feitelijk, compact Nederlands wijndossier op zonder marketingtaal (behalve in producerStoryCommercial). ' +
+            'Gebruik uitsluitend technische fiches van de producent en gerenommeerde vakpers (Jancis Robinson, Vinous, Decanter, Parker, Perswijn, Proefschrift). NEGEER Vivino volledig. ' +
+            'CRUCIAAL VOOR BRONVERIFICATIE: Als exacte cijfers voor dit specifieke huis of oogstjaar niet 100% gepubliceerd zijn in die bronnen, zet dan "dataSourceStatus" op "regional_assumption", leg in "dataSourceExplanation" expliciet uit dat de specifieke gegevens niet in de genoemde vakbronnen te vinden waren en dat een beredeneerde assumptie is gedaan op basis van vergelijkbare wijnen uit dezelfde regio en hetzelfde oogstjaar, en benoem in "assumedParameters" welke onderdelen daarop gebaseerd zijn. ' +
+            'Antwoord UITSLUITEND met één geldig JSON-object volgens deze structuur:\n' +
+            '{\n' +
+            '  "producer": "Naam wijnhuis",\n' +
+            '  "wineName": "Specifieke cuvée",\n' +
+            '  "vintage": 2018,\n' +
+            '  "country": "Land",\n' +
+            '  "region": "Streek",\n' +
+            '  "appellation": "Appellatie",\n' +
+            '  "classification": "Classificatie",\n' +
+            '  "wineType": "Rood / Wit / Mousserend / Rosé / Edelzoet",\n' +
+            '  "abv": "13,5%",\n' +
+            '  "cuveeHierarchyLevel": "Bijv. Grand Vin / Vlaggenschip, Tweede Wijn of Single Vineyard",\n' +
+            '  "cuveeHierarchyNote": "Korte feitelijke duiding waar deze fles staat binnen het assortiment van de producent",\n' +
+            '  "dataSourceStatus": "regional_assumption of exact_producer_and_expert",\n' +
+            '  "dataSourceExplanation": "Duidelijke uitleg of alle data exact uit de producentfiche komt, of dat bij ontbreken daarvan een assumptie is gedaan op basis van vergelijkbare wijnen uit dezelfde regio en hetzelfde oogstjaar",\n' +
+            '  "assumedParameters": "Indien regional_assumption: welke parameters (bijv. exacte houtrijping of rijpingsvenster) zijn gebaseerd op de regio- en jaargangstandaard (laat leeg indien exact)",\n' +
+            '  "drinkFrom": 2022,\n' +
+            '  "sweetSpotStart": 2025,\n' +
+            '  "sweetSpotEnd": 2032,\n' +
+            '  "drinkUntil": 2036,\n' +
+            '  "stageBadge2026": "Jong / Op dronk / In de Top / Afbouw",\n' +
+            '  "wineAgeIn2026": "Bijv. 8 jaar oud in 2026",\n' +
+            '  "recommendationNow": "Direct drinken of nog bewaren",\n' +
+            '  "factualStateNow": "Feitelijke staat van fruit, tannines en tertiaire ontwikkeling nu in 2026",\n' +
+            '  "servingTemperature": "16–18 °C",\n' +
+            '  "decantingAdvice2026": "Concrete karaffeertijd in 2026",\n' +
+            '  "glasswareAdvice": "Type wijnglas",\n' +
+            '  "conciseTastingSummary": "Droge, feitelijke samenvatting van het smaakprofiel in 2026",\n' +
+            '  "primaryTags": ["Steekwoord 1", "Steekwoord 2", "Steekwoord 3", "Steekwoord 4"],\n' +
+            '  "secondaryTags": ["Steekwoord 1", "Steekwoord 2", "Steekwoord 3"],\n' +
+            '  "tertiaryTags": ["Steekwoord 1", "Steekwoord 2", "Steekwoord 3"],\n' +
+            '  "tertiaryDevelopmentNote": "Korte feitelijke toelichting op de tertiaire evolutie in 2026",\n' +
+            '  "wsetBody": "Licht / Medium(-) / Medium / Medium(+) / Vol",\n' +
+            '  "wsetTanninsOrGrip": "Laag / Medium / Medium(+) / Hoog",\n' +
+            '  "wsetAcidity": "Laag / Medium / Medium(+) / Hoog",\n' +
+            '  "wsetSweetness": "Droog / Halfdroog / Edelzoet",\n' +
+            '  "classicPairings": [\n' +
+            '    {\n' +
+            '      "dish": "Naam klassiek gerecht 1",\n' +
+            '      "rationale": "Waarom de structuur van de wijn werkt bij dit gerecht",\n' +
+            '      "chefsTouch": "Cruciaal aandachtspunt in de bereiding (cuisson, zuurbalans, sausreductie) om de combinatie te laten slagen"\n' +
+            '    },\n' +
+            '    {\n' +
+            '      "dish": "Naam klassiek gerecht 2",\n' +
+            '      "rationale": "Waarom de structuur van de wijn werkt bij dit gerecht",\n' +
+            '      "chefsTouch": "Cruciaal aandachtspunt in de bereiding om de combinatie te laten slagen"\n' +
+            '    }\n' +
+            '  ],\n' +
+            '  "asianCuisineName": "Specifieke Aziatische keuken (bijv. Japans, Kantonees, Koreaans, Thais)",\n' +
+            '  "asianDishName": "Naam Aziatisch gerecht",\n' +
+            '  "asianPairingRationale": "Feitelijke smaaktechnische onderbouwing (umami, zuren, tannines, kruidigheid)",\n' +
+            '  "asianChefsTouch": "Cruciaal bereidings- of kruidingsaandachtspunt (bijv. beheersing chili-hitte of sojareductie) om de match te laten slagen",\n' +
+            '  "priceRangeEur75clInclVat": "€ XX – € YY",\n' +
+            '  "releasePriceVsCurrent": "Feitelijke duiding van prijsontwikkeling t.o.v. release en jaargang",\n' +
+            '  "valueQualityAssessment": "Eerlijk oordeel over prijs-kwaliteit binnen de regio",\n' +
+            '  "typicalNlAvailability": "Gangbare verkoopkanalen / vakhandel in Nederland & België",\n' +
+            '  "vintageScore": 93,\n' +
+            '  "vintageQualification": "Kwalificatie van het oogstjaar in deze streek",\n' +
+            '  "vintageClimateFacts": "Feitelijke klimatologische samenvatting van het groeiseizoen",\n' +
+            '  "grapeBlend": [{ "grape": "Druivenras", "percentage": 100 }],\n' +
+            '  "terroirFacts": "Bodemsamenstelling, ligging en hoogte",\n' +
+            '  "vinificationFacts": "Vergisting en houtrijping (type vaten en duur)",\n' +
+            '  "producerStoryCommercial": "Het achtergrondverhaal en de filosofie van het wijnhuis",\n' +
+            '  "consultedExpertSources": ["Technische Fiche Producent", "Jancis Robinson MW", "Vinous", "Decanter"]\n' +
+            '}';
+
+          var userParts = [];
+          if (opts.base64Image) {
+            userParts.push({
+              text: 'Lees en identificeer dit wijnetiket nauwkeurig (wijnhuis, exacte cuvée, appellatie, oogstjaar). Als het oogstjaar niet op de foto zichtbaar is en het geen Non-Vintage (NV) betreft, neem dan een recent representatief oogstjaar en vermeld dat in dataSourceExplanation. Genereer het volledige JSON-wijndossier voor referentiejaar ' + CURRENT_YEAR + '.'
+            });
+            userParts.push({
+              inlineData: {
+                mimeType: opts.mimeType || 'image/jpeg',
+                data: opts.base64Image
+              }
+            });
+          } else {
+            userParts.push({
+              text:
+                'Genereer het volledige JSON-wijndossier voor referentiejaar ' + CURRENT_YEAR + ' voor:\n' +
+                '- Wijn / Producent: ' + (opts.wineQuery || '') + '\n' +
+                '- Oogstjaar: ' + (opts.vintage || 'Recent representatief oogstjaar') + '\n' +
+                '- Regio (indien opgegeven): ' + (opts.region || 'Leid af uit wijnnaam')
+            });
+          }
+
+          var resp = await callGeminiApi({
+            contents: [{ role: 'user', parts: userParts }],
+            systemInstruction: { parts: [{ text: sysPrompt }] },
+            generationConfig: {
+              temperature: 0.1,
+              responseMimeType: 'application/json',
+              thinkingConfig: { thinkingBudget: 0 }
+            }
+          });
+
+          var parsed = parseJsonSafely(resp.text);
+          if (!parsed || (!parsed.producer && !parsed.wineName)) {
+            throw new Error('Kon geen geldige wijngegevens uit het antwoord halen.');
+          }
+
+          var cKey = makeKey(parsed.producer, parsed.wineName, parsed.vintage);
+          parsed._cachedAt = Date.now();
+          appState.cache[cKey] = parsed;
+          if (opts.wineQuery) {
+            var qKey = makeKey('', opts.wineQuery, opts.vintage);
+            appState.cache[qKey] = parsed;
+          }
+          saveCache();
+
+          appState.dossier = parsed;
+          appState.dossierFromCache = false;
+          appState.qaItems = [];
+          renderDossierView(parsed);
+          switchTab('dossier');
+        } catch (err) {
+          showMsg('Analyse niet gelukt: ' + (err && err.message ? err.message : 'Controleer je verbinding of probeer het opnieuw.'));
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      // ==========================================
+      // 6. CACHE & RIJPINGSCURVE BEREKENINGEN
+      // ==========================================
+      function findCachedDossier(wineQuery, vintage) {
+        var directKey = makeKey('', wineQuery, vintage);
+        if (appState.cache[directKey]) return appState.cache[directKey];
+        var keys = Object.keys(appState.cache || {});
+        var qClean = String(wineQuery || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        var vClean = String(vintage || 'nv').replace(/[^0-9]/g, '') || 'nv';
+        for (var i = 0; i < keys.length; i++) {
+          var item = appState.cache[keys[i]];
+          if (!item) continue;
+          var itemKey = makeKey(item.producer, item.wineName, item.vintage);
+          if (itemKey.indexOf(qClean) !== -1 && itemKey.indexOf('_' + vClean) !== -1) {
+            return item;
+          }
+        }
+        return null;
+      }
+
+      function renderRecentCacheList() {
+        var card = document.getElementById('recentCacheCard');
+        var list = document.getElementById('recentCacheList');
+        if (!card || !list) return;
+
+        var seen = {};
+        var uniqueItems = [];
+        var keys = Object.keys(appState.cache || {});
+        for (var i = 0; i < keys.length; i++) {
+          var w = appState.cache[keys[i]];
+          if (!w || !w.wineName) continue;
+          var uKey = makeKey(w.producer, w.wineName, w.vintage);
+          if (!seen[uKey]) {
+            seen[uKey] = true;
+            uniqueItems.push(w);
+          }
+        }
+
+        uniqueItems.sort(function (a, b) {
+          return (b._cachedAt || 0) - (a._cachedAt || 0);
+        });
+
+        if (uniqueItems.length === 0) {
+          card.classList.add('hidden');
+          list.innerHTML = '';
+          return;
+        }
+
+        card.classList.remove('hidden');
+        var html = '';
+        var limit = Math.min(5, uniqueItems.length);
+        for (var j = 0; j < limit; j++) {
+          var item = uniqueItems[j];
+          var itemKey = makeKey(item.producer, item.wineName, item.vintage);
+          html +=
+            '<button type="button" data-cache-key="' + escapeHtml(itemKey) + '" class="cache-item-btn w-full text-left px-3 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center justify-between gap-2 transition-colors">' +
+              '<div class="min-w-0">' +
+                '<div class="text-xs font-bold text-slate-900 truncate">' + escapeHtml(item.producer) + ' — ' + escapeHtml(item.wineName) + '</div>' +
+                '<div class="text-[10px] text-slate-500 truncate">' + escapeHtml(item.appellation || item.region || '') + ' • Top: ' + (item.sweetSpotStart || '--') + '–' + (item.sweetSpotEnd || '--') + '</div>' +
+              '</div>' +
+              '<span class="px-2 py-0.5 rounded bg-rose-50 border border-rose-200 text-rose-800 font-mono-num font-bold text-[11px] shrink-0">' + (item.vintage || 'NV') + '</span>' +
+            '</button>';
+        }
+        list.innerHTML = html;
+
+        var btns = list.querySelectorAll('.cache-item-btn');
+        for (var b = 0; b < btns.length; b++) {
+          btns[b].onclick = function () {
+            var k = this.getAttribute('data-cache-key');
+            var found = appState.cache[k];
+            if (found) {
+              appState.dossier = found;
+              appState.dossierFromCache = true;
+              appState.qaItems = [];
+              renderDossierView(found);
+              switchTab('dossier');
+            }
+          };
+        }
+      }
+
+      function getCurveYAtU(u) {
+        var clamped = Math.max(0, Math.min(1, u));
+        var center = 0.56;
+        var sigma = clamped <= center ? 0.24 : 0.21;
+        var z = (clamped - center) / sigma;
+        var gauss = Math.exp(-0.5 * z * z);
+        var yBase = 148;
+        var yPeak = 28;
+        return yBase - (yBase - yPeak) * gauss;
+      }
+
+      function buildSmoothCurveSvgPaths() {
+        var steps = 80;
+        var pts = [];
+        for (var i = 0; i <= steps; i++) {
+          var u = i / steps;
+          var x = Math.round(u * 4000) / 10;
+          var y = Math.round(getCurveYAtU(u) * 10) / 10;
+          pts.push((i === 0 ? 'M ' : 'L ') + x + ' ' + y);
+        }
+        var strokePath = pts.join(' ');
+        var areaPath = strokePath + ' L 400 154 L 0 154 Z';
+        return { strokePath: strokePath, areaPath: areaPath };
+      }
+
+      function computeMaturationData(w) {
+        var v = (w.vintage && Number(w.vintage) > 1900) ? Number(w.vintage) : (CURRENT_YEAR - 4);
+        var dFrom = Number(w.drinkFrom) || (v + 3);
+        var sStart = Number(w.sweetSpotStart) || (dFrom + 2);
+        var sEnd = Number(w.sweetSpotEnd) || (sStart + 5);
+        var dUntil = Number(w.drinkUntil) || (sEnd + 4);
+
+        if (dFrom < v) dFrom = v;
+        if (sStart < dFrom) sStart = dFrom;
+        if (sEnd <= sStart) sEnd = sStart + 3;
+        if (dUntil < sEnd) dUntil = sEnd + 2;
+
+        var ageDrink = Math.max(1, dFrom - v);
+        var ageSweetStart = Math.max(ageDrink, sStart - v);
+        var ageSweetEnd = Math.max(ageSweetStart + 1, sEnd - v);
+        var ageDecline = Math.max(ageSweetEnd + 1, dUntil - v);
+
+        var col1Years = '0–' + Math.max(1, ageDrink - 1) + ' jaar';
+        var col2Years = ageDrink === ageSweetStart ? (ageDrink + ' jaar') : (ageDrink + '–' + Math.max(ageDrink, ageSweetStart - 1) + ' jaar');
+        var col3Years = ageSweetStart + '–' + ageSweetEnd + ' jaar';
+        var col4Years = ageDecline + '+ jaar';
+
+        var col1Cal = v + '–' + Math.max(v, dFrom - 1);
+        var col2Cal = dFrom === sStart ? String(dFrom) : (dFrom + '–' + Math.max(dFrom, sStart - 1));
+        var col3Cal = sStart + '–' + sEnd;
+        var col4Cal = dUntil + '+';
+
+        var activeCol = 2;
+        var linePct = 38;
+
+        if (CURRENT_YEAR < dFrom) {
+          activeCol = 1;
+          var span1 = Math.max(1, dFrom - v);
+          linePct = 4 + Math.min(1, Math.max(0, (CURRENT_YEAR - v) / span1)) * 19;
+        } else if (CURRENT_YEAR < sStart) {
+          activeCol = 2;
+          var span2 = Math.max(1, sStart - dFrom);
+          linePct = 25 + Math.min(1, Math.max(0, (CURRENT_YEAR - dFrom) / span2)) * 23;
+        } else if (CURRENT_YEAR <= sEnd) {
+          activeCol = 3;
+          var span3 = Math.max(1, sEnd - sStart);
+          linePct = 50 + Math.min(1, Math.max(0, (CURRENT_YEAR - sStart) / span3)) * 24;
+        } else {
+          activeCol = 4;
+          var span4 = Math.max(2, (dUntil + 6) - sEnd);
+          linePct = 76 + Math.min(1, Math.max(0, (CURRENT_YEAR - sEnd) / span4)) * 20;
+        }
+
+        return {
+          col1Years: col1Years,
+          col2Years: col2Years,
+          col3Years: col3Years,
+          col4Years: col4Years,
+          col1Cal: col1Cal,
+          col2Cal: col2Cal,
+          col3Cal: col3Cal,
+          col4Cal: col4Cal,
+          activeCol: activeCol,
+          linePct: Math.max(4, Math.min(96, linePct)),
+          isSweet: activeCol === 3
+        };
+      }
+
+      function renderThreeColorMaturationCurve(w, m) {
+        var paths = buildSmoothCurveSvgPaths();
+        var uNow = m.linePct / 100;
+        var xNow = Math.round(uNow * 4000) / 10;
+        var yNow = Math.round(getCurveYAtU(uNow) * 10) / 10;
+        var badgeX = Math.max(24, Math.min(376, xNow));
+
+        var colTextClass = function (colIdx, isTopCol) {
+          if (m.activeCol === colIdx) {
+            return isTopCol ? 'text-emerald-800 font-bold' : 'text-rose-900 font-bold';
+          }
+          return 'text-slate-800 font-semibold';
+        };
+
+        var colSubClass = function (colIdx, isTopCol) {
+          if (m.activeCol === colIdx) {
+            return isTopCol ? 'text-emerald-700 font-bold' : 'text-rose-800 font-bold';
+          }
+          return 'text-slate-400 font-medium';
+        };
+
+        return (
+          '<div class="bg-white border border-slate-100 rounded-2xl p-3.5 sm:p-5 shadow-sm">' +
+            '<div class="flex items-center justify-between gap-2 mb-1.5">' +
+              '<h3 class="text-sm sm:text-base font-bold text-slate-800 tracking-tight">Rijpingsfase</h3>' +
+              '<span class="text-[11px] font-medium text-slate-500 truncate">' + escapeHtml(w.wineAgeIn2026 || '') + '</span>' +
+            '</div>' +
+
+            '<div class="relative w-full select-none">' +
+              '<svg viewBox="0 0 400 172" class="w-full h-auto block overflow-visible">' +
+                '<defs>' +
+                  '<linearGradient id="phaseFillGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
+                    '<stop offset="0%" stop-color="#64748B" />' +
+                    '<stop offset="23%" stop-color="#64748B" />' +
+                    '<stop offset="35%" stop-color="#10B981" />' +
+                    '<stop offset="70%" stop-color="#059669" />' +
+                    '<stop offset="82%" stop-color="#D97706" />' +
+                    '<stop offset="100%" stop-color="#B45309" />' +
+                  '</linearGradient>' +
+                  '<linearGradient id="phaseStrokeGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
+                    '<stop offset="0%" stop-color="#64748B" />' +
+                    '<stop offset="23%" stop-color="#475569" />' +
+                    '<stop offset="35%" stop-color="#059669" />' +
+                    '<stop offset="70%" stop-color="#047857" />' +
+                    '<stop offset="82%" stop-color="#B45309" />' +
+                    '<stop offset="100%" stop-color="#92400E" />' +
+                  '</linearGradient>' +
+                  '<linearGradient id="verticalFade" x1="0%" y1="0%" x2="0%" y2="100%">' +
+                    '<stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.58" />' +
+                    '<stop offset="65%" stop-color="#FFFFFF" stop-opacity="0.24" />' +
+                    '<stop offset="98%" stop-color="#FFFFFF" stop-opacity="0.0" />' +
+                  '</linearGradient>' +
+                  '<mask id="curveVerticalMask">' +
+                    '<rect x="0" y="0" width="400" height="165" fill="url(#verticalFade)" />' +
+                  '</mask>' +
+                '</defs>' +
+
+                '<line x1="0" y1="24" x2="400" y2="24" stroke="#F1F5F9" stroke-width="1" />' +
+                '<line x1="0" y1="68" x2="400" y2="68" stroke="#F1F5F9" stroke-width="1" />' +
+                '<line x1="0" y1="112" x2="400" y2="112" stroke="#F1F5F9" stroke-width="1" />' +
+                '<line x1="0" y1="154" x2="400" y2="154" stroke="#E2E8F0" stroke-width="1.25" />' +
+
+                '<line x1="100" y1="24" x2="100" y2="154" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3" />' +
+                '<line x1="200" y1="24" x2="200" y2="154" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3" />' +
+                '<line x1="300" y1="24" x2="300" y2="154" stroke="#F1F5F9" stroke-width="1" stroke-dasharray="3 3" />' +
+
+                '<path d="' + paths.areaPath + '" fill="url(#phaseFillGrad)" mask="url(#curveVerticalMask)" />' +
+                '<path d="' + paths.strokePath + '" fill="none" stroke="url(#phaseStrokeGrad)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />' +
+
+                '<line x1="' + xNow + '" y1="18" x2="' + xNow + '" y2="154" stroke="#881337" stroke-width="2.2" />' +
+                '<circle cx="' + xNow + '" cy="' + yNow + '" r="6.5" fill="#881337" fill-opacity="0.18" />' +
+                '<circle cx="' + xNow + '" cy="' + yNow + '" r="4.2" fill="#FFFFFF" stroke="#881337" stroke-width="2.4" />' +
+
+                '<rect x="' + (badgeX - 18) + '" y="1" width="36" height="15" rx="4" fill="#881337" />' +
+                '<text x="' + badgeX + '" y="11.5" text-anchor="middle" fill="#FFFFFF" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700">' + CURRENT_YEAR + '</text>' +
+              '</svg>' +
+            '</div>' +
+
+            '<div class="grid grid-cols-4 gap-1 pt-2.5 text-center border-t border-slate-100">' +
+              '<div class="min-w-0 px-0.5">' +
+                '<div class="text-[11px] sm:text-xs leading-tight whitespace-nowrap truncate ' + colTextClass(1, false) + '">' + escapeHtml(m.col1Years) + '</div>' +
+                '<div class="text-[11px] sm:text-xs leading-tight ' + colSubClass(1, false) + ' mt-0.5">Jong</div>' +
+                '<div class="text-[9px] sm:text-[10px] font-mono-num text-slate-400 mt-0.5 truncate">' + escapeHtml(m.col1Cal) + '</div>' +
+              '</div>' +
+              '<div class="min-w-0 px-0.5">' +
+                '<div class="text-[11px] sm:text-xs leading-tight whitespace-nowrap truncate ' + colTextClass(2, false) + '">' + escapeHtml(m.col2Years) + '</div>' +
+                '<div class="text-[11px] sm:text-xs leading-tight ' + colSubClass(2, false) + ' mt-0.5">Op dronk</div>' +
+                '<div class="text-[9px] sm:text-[10px] font-mono-num text-slate-400 mt-0.5 truncate">' + escapeHtml(m.col2Cal) + '</div>' +
+              '</div>' +
+              '<div class="min-w-0 px-0.5">' +
+                '<div class="text-[11px] sm:text-xs leading-tight whitespace-nowrap truncate ' + colTextClass(3, true) + '">' + escapeHtml(m.col3Years) + '</div>' +
+                '<div class="text-[11px] sm:text-xs leading-tight ' + colSubClass(3, true) + ' mt-0.5">Top</div>' +
+                '<div class="text-[9px] sm:text-[10px] font-mono-num text-emerald-700 font-semibold mt-0.5 truncate">' + escapeHtml(m.col3Cal) + '</div>' +
+              '</div>' +
+              '<div class="min-w-0 px-0.5">' +
+                '<div class="text-[11px] sm:text-xs leading-tight whitespace-nowrap truncate ' + colTextClass(4, false) + '">' + escapeHtml(m.col4Years) + '</div>' +
+                '<div class="text-[11px] sm:text-xs leading-tight ' + colSubClass(4, false) + ' mt-0.5">Afbouw</div>' +
+                '<div class="text-[9px] sm:text-[10px] font-mono-num text-slate-400 mt-0.5 truncate">' + escapeHtml(m.col4Cal) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      // ==========================================
+      // 7. DOSSIER WEERGAVE & WAARDEBEPALING ONDER GERECHTEN
+      // ==========================================
+      function renderDossierView(w) {
+        var output = document.getElementById('dossierOutput');
+        var badge = document.getElementById('dossierBadge');
+        if (!output || !w) return;
+        if (badge) badge.classList.remove('hidden');
+
+        var m = computeMaturationData(w);
+
+        var blendArr = Array.isArray(w.grapeBlend) ? w.grapeBlend : [];
+        var blendBar = '';
+        var blendRows = '';
+        var colors = ['bg-rose-800', 'bg-emerald-600', 'bg-amber-600', 'bg-slate-600'];
+        for (var i = 0; i < blendArr.length; i++) {
+          var g = blendArr[i] || {};
+          var pctVal = Math.max(0, Math.min(100, Number(g.percentage) || 0));
+          blendBar += '<div style="width:' + pctVal + '%" class="' + colors[i % colors.length] + ' h-full"></div>';
+          blendRows += '<div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 border border-slate-200"><span class="text-xs font-semibold">' + escapeHtml(g.grape) + '</span><span class="text-xs font-mono-num font-bold text-rose-800">' + pctVal + '%</span></div>';
+        }
+
+        var classics = Array.isArray(w.classicPairings) ? w.classicPairings : [];
+        var classicsHtml = '';
+        for (var c = 0; c < classics.length; c++) {
+          var cp = classics[c] || {};
+          classicsHtml +=
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<h4 class="font-bold text-sm text-slate-900">' + escapeHtml(cp.dish) + '</h4>' +
+                '<span class="px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0">Klassiek</span>' +
+              '</div>' +
+              '<p class="text-xs text-slate-600 leading-relaxed">' + escapeHtml(cp.rationale) + '</p>' +
+              (cp.chefsTouch
+                ? '<div class="bg-white border-l-4 border-rose-800 rounded-r-lg p-2.5 text-xs text-slate-800 leading-relaxed">' +
+                    '<strong class="text-rose-800 uppercase tracking-wider text-[10px] block mb-0.5">Chef’s Touch • Aandachtspunt Bereiding</strong>' +
+                    escapeHtml(cp.chefsTouch) +
+                  '</div>'
+                : '') +
+            '</div>';
+        }
+
+        var statusLower = String(w.dataSourceStatus || '').toLowerCase();
+        var isExactVerified = statusLower.indexOf('exact') !== -1 && !w.assumedParameters;
+        var sourceStatusHtml = !isExactVerified
+          ? '<div class="bg-amber-50 border border-amber-300 rounded-xl p-3.5 space-y-1.5">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<span class="text-[10px] uppercase tracking-wider font-bold text-amber-900">Bronverificatie &amp; Regio-Assumptie</span>' +
+                '<span class="px-2 py-0.5 rounded bg-amber-200 text-amber-950 font-bold text-[10px]">Assumptie op Regio &amp; Jaartal</span>' +
+              '</div>' +
+              '<p class="text-xs text-amber-950 leading-relaxed font-medium">' +
+                escapeHtml(w.dataSourceExplanation || ('De specifieke gegevens over deze wijn waren niet volledig te vinden in de genoemde vakbronnen; er is daarom een beredeneerde assumptie gedaan op basis van vergelijkbare wijnen uit ' + (w.region || 'dezelfde regio') + ' en oogstjaar ' + (w.vintage || 'NV') + '.')) +
+              '</p>' +
+              (w.assumedParameters
+                ? '<div class="text-[11px] text-amber-900 bg-white/80 border border-amber-200 rounded-lg px-2.5 py-1.5">' +
+                    '<strong>Toelichting assumptie:</strong> ' + escapeHtml(w.assumedParameters) +
+                  '</div>'
+                : '') +
+            '</div>'
+          : '<div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 space-y-1">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<span class="text-[10px] uppercase tracking-wider font-bold text-emerald-900">Bronverificatie (Producent &amp; Vakpers)</span>' +
+                '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px]">Geverifieerde Flesdata</span>' +
+              '</div>' +
+              '<p class="text-xs text-emerald-950 leading-relaxed">' +
+                escapeHtml(w.dataSourceExplanation || 'Volledig geverifieerd aan de hand van de gepubliceerde technische fiche van de producent en erkende wijnvakpers.') +
+              '</p>' +
+            '</div>';
+
+        var copySearchPhrase = getCleanBottleSearchPhrase(w, true);
+        var sourcesArr = Array.isArray(w.consultedExpertSources) && w.consultedExpertSources.length > 0
+          ? w.consultedExpertSources
+          : ['Technische Fiche Producent', 'Jancis Robinson MW', 'Vinous', 'Decanter'];
+
+        output.innerHTML =
+          '<!-- 1. IDENTIFICATIE, BRON-/ASSUMPTIEMELDING & CUVÉE-VERIFICATIE -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div class="flex flex-wrap items-center justify-between gap-2">' +
+              '<div class="flex flex-wrap items-center gap-1.5">' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-rose-800 text-white">' + escapeHtml(w.wineType || 'Rood') + '</span>' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">' + escapeHtml(w.classification) + '</span>' +
+                '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono-num font-semibold bg-slate-100 text-slate-700 border border-slate-200">Alc. ' + escapeHtml(w.abv) + '</span>' +
+              '</div>' +
+              '<button id="refreshDossierBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 flex items-center gap-1">' +
+                '<span>↻ Ververs</span>' +
+              '</button>' +
+            '</div>' +
+
+            '<div>' +
+              '<div class="flex items-center gap-2 flex-wrap">' +
+                '<span class="text-xs uppercase tracking-widest text-rose-800 font-bold break-words">' + escapeHtml(w.producer) + '</span>' +
+                (appState.dossierFromCache
+                  ? '<span class="px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-700">Uit Cache (0s)</span>'
+                  : '') +
+              '</div>' +
+              '<h1 class="text-2xl sm:text-3xl font-serif-title font-bold text-slate-900 leading-tight mt-0.5 break-words">' + escapeHtml(w.wineName) + ' <span class="text-rose-800">' + (w.vintage || 'NV') + '</span></h1>' +
+              '<div class="text-xs text-slate-600 mt-1 break-words"><strong>' + escapeHtml(w.appellation) + '</strong> • ' + escapeHtml(w.region) + ', ' + escapeHtml(w.country) + '</div>' +
+            '</div>' +
+
+            sourceStatusHtml +
+
+            (w.cuveeHierarchyNote
+              ? '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1">' +
+                  '<div class="flex items-center justify-between gap-2 flex-wrap">' +
+                    '<span class="text-[10px] uppercase tracking-wider font-bold text-slate-700">Cuvée-Verificatie</span>' +
+                    '<span class="px-2 py-0.5 rounded bg-slate-200 text-slate-900 font-bold text-[10px]">' + escapeHtml(w.cuveeHierarchyLevel || 'Label-check') + '</span>' +
+                  '</div>' +
+                  '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.cuveeHierarchyNote) + '</p>' +
+                '</div>'
+              : '') +
+          '</div>' +
+
+          '<!-- 2. RIJPINGSFASE (VARIANT 2: DE 3-KLEUREN VERLOOPCURVE) -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div class="flex flex-wrap items-start justify-between gap-2">' +
+              '<div class="min-w-0"><span class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold block">Bewaarpotentieel &amp; Piek (' + CURRENT_YEAR + ')</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Rijpingsfase &amp; Drinkvenster</h2></div>' +
+              '<span class="px-3 py-1 rounded-full text-[11px] font-bold shrink-0 ' + (m.isSweet ? 'bg-emerald-600 text-white' : 'bg-rose-800 text-white') + '">' + escapeHtml(w.stageBadge2026 || 'Status 2026') + '</span>' +
+            '</div>' +
+
+            renderThreeColorMaturationCurve(w, m) +
+
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1">' +
+              '<div class="text-xs font-bold text-rose-800">Advies nu (' + CURRENT_YEAR + '): <span class="text-slate-900">' + escapeHtml(w.recommendationNow) + '</span></div>' +
+              '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.factualStateNow) + '</p>' +
+            '</div>' +
+
+            '<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5"><span class="text-[10px] text-slate-500 block">Temperatuur</span><strong class="break-words leading-snug">' + escapeHtml(w.servingTemperature || '16–18 °C') + '</strong></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5"><span class="text-[10px] text-slate-500 block">Karafferen</span><strong class="break-words leading-snug">' + escapeHtml(w.decantingAdvice2026 || '30–60 min') + '</strong></div>' +
+              '<div class="col-span-2 sm:col-span-1 bg-slate-50 border border-slate-200 rounded-xl p-2.5"><span class="text-[10px] text-slate-500 block">Wijnglas</span><strong class="break-words leading-snug">' + escapeHtml(w.glasswareAdvice || 'Bordeaux') + '</strong></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 3. PROEFNOTITIE IN STEEKWOORDEN & WSET STRUCTUUR -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-rose-800 font-bold block">Proefnotitie (' + CURRENT_YEAR + ')</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Aroma’s &amp; WSET-Structuur</h2></div>' +
+            '<p class="text-xs text-slate-700 bg-slate-50 border border-slate-200 rounded-xl p-3 leading-relaxed">' + escapeHtml(w.conciseTastingSummary) + '</p>' +
+            '<div class="space-y-2">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[11px] font-bold text-rose-800 mb-1">1. Primair (Fruit &amp; Terroir)</div><div class="flex flex-wrap gap-1.5">' + renderPills(w.primaryTags) + '</div></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[11px] font-bold text-amber-700 mb-1">2. Secundair (Vinificatie &amp; Hout)</div><div class="flex flex-wrap gap-1.5">' + renderPills(w.secondaryTags) + '</div></div>' +
+              '<div class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3"><div class="text-[11px] font-bold text-emerald-800 mb-1">3. Tertiair (Rijping &amp; Evolutie in ' + CURRENT_YEAR + ')</div><div class="flex flex-wrap gap-1.5">' + renderPills(w.tertiaryTags) + '</div><p class="text-[11px] text-slate-700 mt-1">' + escapeHtml(w.tertiaryDevelopmentNote) + '</p></div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Body</span><strong>' + escapeHtml(w.wsetBody) + '</strong></div>' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Tannine/Grip</span><strong>' + escapeHtml(w.wsetTanninsOrGrip) + '</strong></div>' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Zuurgraad</span><strong>' + escapeHtml(w.wsetAcidity) + '</strong></div>' +
+              '<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200"><span class="text-slate-500 block text-[10px]">Zoetheid</span><strong>' + escapeHtml(w.wsetSweetness) + '</strong></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 4. WIJN & SPIJS MET CHEF’S TOUCH -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-rose-800 font-bold block">Gastronomie &amp; Chef’s Touch</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Klassieke &amp; Aziatische Combinaties</h2></div>' +
+            '<div class="space-y-2.5">' + classicsHtml + '</div>' +
+            '<div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<h4 class="font-bold text-sm text-slate-900">' + escapeHtml(w.asianDishName) + '</h4>' +
+                '<span class="px-2 py-0.5 rounded bg-amber-600 text-white font-bold text-[10px] shrink-0">Aziatisch • ' + escapeHtml(w.asianCuisineName || 'Azië') + '</span>' +
+              '</div>' +
+              '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.asianPairingRationale) + '</p>' +
+              (w.asianChefsTouch
+                ? '<div class="bg-white border-l-4 border-amber-600 rounded-r-lg p-2.5 text-xs text-slate-800 leading-relaxed">' +
+                    '<strong class="text-amber-800 uppercase tracking-wider text-[10px] block mb-0.5">Chef’s Touch • Aandachtspunt Bereiding</strong>' +
+                    escapeHtml(w.asianChefsTouch) +
+                  '</div>'
+                : '') +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 5. WAARDEBEPALING & MARKTPOSITIE (DIRECT ONDER DE GERECHTEN) -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div class="flex flex-wrap items-start justify-between gap-2.5">' +
+              '<div class="min-w-0 flex-1">' +
+                '<span class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold block">Waardebepaling &amp; Marktprijs (' + CURRENT_YEAR + ')</span>' +
+                '<h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Indicatieve Fleswaarde (75cl incl. btw)</h2>' +
+              '</div>' +
+              '<div class="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-right shrink-0 shadow-sm">' +
+                '<span class="font-mono-num font-bold text-base sm:text-lg text-emerald-950 block leading-none whitespace-nowrap">' + escapeHtml(w.priceRangeEur75clInclVat || '€ --') + '</span>' +
+                '<span class="text-[10px] text-emerald-800 font-semibold block mt-1">Marktbandbreedte NL/EU</span>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1">' +
+                '<strong class="text-slate-900 block text-[11px] uppercase tracking-wider">Prijsontwikkeling &amp; Jaargang</strong>' +
+                '<p class="text-slate-600 leading-relaxed">' + escapeHtml(w.releasePriceVsCurrent || 'Consequente marktwaarde in lijn met vergelijkbare jaargangen uit deze appellatie.') + '</p>' +
+              '</div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1">' +
+                '<strong class="text-slate-900 block text-[11px] uppercase tracking-wider">Prijs-Kwaliteit &amp; Positionering</strong>' +
+                '<p class="text-slate-600 leading-relaxed">' + escapeHtml(w.valueQualityAssessment || 'Passend geprijsd voor het kwaliteitsniveau en rijpingspotentieel binnen de regio.') + '</p>' +
+              '</div>' +
+            '</div>' +
+
+            (w.typicalNlAvailability
+              ? '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 leading-relaxed">' +
+                  '<strong class="text-slate-900">Gangbare distributie / vakhandel: </strong>' + escapeHtml(w.typicalNlAvailability) +
+                '</div>'
+              : '') +
+
+            '<div class="flex items-center justify-between gap-2 bg-slate-100/80 border border-slate-200 rounded-xl px-3 py-2">' +
+              '<div class="min-w-0">' +
+                '<span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block">Zelf opzoeken in je browser</span>' +
+                '<span class="text-xs font-mono-num text-slate-800 truncate block">' + escapeHtml(copySearchPhrase) + '</span>' +
+              '</div>' +
+              '<button type="button" id="copyWineSearchTermBtn" data-search-term="' + escapeHtml(copySearchPhrase) + '" class="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-[11px] font-bold text-slate-800 shrink-0 shadow-sm">Kopieer naam</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 6. OOGSTJAAR, CÉPAGES, PRODUCENT & BRONVERMELDING -->' +
+          '<div class="app-card p-4 sm:p-5 space-y-3.5">' +
+            '<div><span class="text-[10px] uppercase tracking-widest text-slate-500 font-bold block">Wijnhuis, Oogstjaar &amp; Techniek</span><h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Cépages, Oogstjaar &amp; Producent</h2></div>' +
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between gap-3">' +
+              '<div class="min-w-0 flex-1"><span class="text-[10px] uppercase tracking-wider font-bold text-rose-800 block break-words">Oogstjaar ' + (w.vintage || 'NV') + ' in ' + escapeHtml(w.region) + '</span><span class="text-xs font-bold text-slate-900 block break-words">' + escapeHtml(w.vintageQualification || '') + '</span><p class="text-xs text-slate-600 mt-0.5 leading-relaxed break-words">' + escapeHtml(w.vintageClimateFacts || '') + '</p></div>' +
+              '<div class="px-3 py-2 rounded-xl bg-white border border-slate-200 text-center shrink-0 shadow-sm"><span class="font-mono-num font-bold text-lg text-rose-800">' + (w.vintageScore || '--') + '</span><span class="text-[10px] text-slate-400 block">/100</span></div>' +
+            '</div>' +
+            '<div class="h-2.5 w-full rounded-full overflow-hidden flex bg-slate-100 border border-slate-200">' + blendBar + '</div>' +
+            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">' + blendRows + '</div>' +
+            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><strong class="text-slate-900 block mb-0.5">Terroir &amp; Bodem</strong><span class="text-slate-600">' + escapeHtml(w.terroirFacts || '') + '</span></div>' +
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><strong class="text-slate-900 block mb-0.5">Vinificatie &amp; Houtrijping</strong><span class="text-slate-600">' + escapeHtml(w.vinificationFacts || '') + '</span></div>' +
+            '</div>' +
+            '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1"><div class="text-[11px] font-bold uppercase text-rose-800">Beschrijving Producent</div><p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(w.producerStoryCommercial) + '</p></div>' +
+            '<div class="pt-1 border-t border-slate-100">' +
+              '<span class="text-[10px] uppercase tracking-wider font-bold text-slate-500 block mb-1.5">Geraadpleegde Referentie- &amp; Vakbronnen</span>' +
+              '<div class="flex flex-wrap gap-1.5">' + renderPills(sourcesArr) + '</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<!-- 7. HELEMAAL ONDERAAN: INTERACTIEVE MENU-CHECK & VRAAGBAAK -->' +
+          '<div class="app-card border-2 border-slate-900/10 p-4 sm:p-5 space-y-3">' +
+            '<div>' +
+              '<span class="text-[10px] uppercase tracking-widest text-emerald-700 font-bold block">Sommelier Vraagbaak &amp; Menu-Check</span>' +
+              '<h2 class="text-xl font-serif-title font-bold text-slate-900 mt-0.5">Stel nog een vraag over deze wijn</h2>' +
+              '<p class="text-xs text-slate-600 mt-0.5">Vraag welke kaas erbij past of typ een eigen gerecht voor een directe beoordeling met Chef’s Touch.</p>' +
+            '</div>' +
+            '<form id="qaForm" class="flex gap-2">' +
+              '<input id="qaInput" type="text" placeholder="Bijv. Welke kaas past hierbij? of Past dit bij eend?" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-rose-800" />' +
+              '<button type="submit" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shrink-0">Vraag</button>' +
+            '</form>' +
+            '<div id="qaList" class="space-y-2.5 pt-1">' + renderQaHistory() + '</div>' +
+          '</div>';
+
+        var refBtn = document.getElementById('refreshDossierBtn');
+        if (refBtn) {
+          refBtn.onclick = function () {
+            if (appState.lastQueryOpts) {
+              runAnalysis(appState.lastQueryOpts, true);
+            } else if (appState.dossier) {
+              runAnalysis({
+                wineQuery: appState.dossier.producer + ' ' + appState.dossier.wineName,
+                vintage: String(appState.dossier.vintage || ''),
+                region: appState.dossier.region || ''
+              }, true);
+            }
+          };
+        }
+
+        var copySearchBtn = document.getElementById('copyWineSearchTermBtn');
+        if (copySearchBtn) {
+          copySearchBtn.onclick = function () {
+            var term = this.getAttribute('data-search-term');
+            var btnEl = this;
+            copyTextSilently(term);
+            var orig = btnEl.textContent;
+            btnEl.textContent = 'Gekopieerd ✓';
+            setTimeout(function () { btnEl.textContent = orig; }, 2000);
+          };
+        }
+
+        bindQaForm();
+      }
+
+      function copyTextSilently(str) {
+        if (!str) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(str).catch(function () {});
+        }
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = str;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        } catch (e) {}
+      }
+
+      function renderPills(arr) {
+        if (!Array.isArray(arr)) return '';
+        var h = '';
+        for (var i = 0; i < arr.length; i++) {
+          h += '<span class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-800">' + escapeHtml(arr[i]) + '</span>';
+        }
+        return h;
+      }
+
+      function renderQaHistory() {
+        if (!appState.qaItems || appState.qaItems.length === 0) return '';
+        var h = '';
+        for (var i = 0; i < appState.qaItems.length; i++) {
+          var item = appState.qaItems[i];
+          if (item.structured) {
+            var verdict = item.structured.verdict || 'Advies';
+            var isPositive = verdict.toLowerCase().indexOf('goede') !== -1 || verdict.toLowerCase().indexOf('uitstekend') !== -1 || verdict.toLowerCase().indexOf('advies') !== -1;
+            var badgeBg = isPositive ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white';
+            h +=
+              '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">' +
+                '<div class="flex items-center justify-between gap-2">' +
+                  '<span class="text-xs font-bold text-slate-900">' + escapeHtml(item.q) + '</span>' +
+                  '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 ' + badgeBg + '">' + escapeHtml(verdict) + '</span>' +
+                '</div>' +
+                '<p class="text-xs text-slate-700 leading-relaxed">' + escapeHtml(item.structured.reasoning || '') + '</p>' +
+                (item.structured.chefsTouch
+                  ? '<div class="bg-white border-l-4 border-emerald-600 rounded-r-lg p-2.5 text-xs text-slate-800 leading-relaxed">' +
+                      '<strong class="text-emerald-800 uppercase tracking-wider text-[10px] block mb-0.5">Chef’s Touch • Aandachtspunt</strong>' +
+                      escapeHtml(item.structured.chefsTouch) +
+                    '</div>'
+                  : '') +
+              '</div>';
+          } else {
+            h += '<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1"><div class="text-xs font-bold text-slate-900">Vraag: ' + escapeHtml(item.q) + '</div><p class="text-xs text-slate-700">' + escapeHtml(item.a) + '</p></div>';
+          }
+        }
+        return h;
+      }
+
+      function bindQaForm() {
+        var form = document.getElementById('qaForm');
+        if (!form) return;
+        form.onsubmit = async function (e) {
+          e.preventDefault();
+          var inp = document.getElementById('qaInput');
+          var q = inp ? inp.value.trim() : '';
+          if (!q || !appState.dossier) return;
+          inp.value = '';
+          setBusy(true);
+          try {
+            var d = appState.dossier;
+            var menuCheckPrompt =
+              'Je bent een Master of Wine en gastronomisch adviseur. De gebruiker stelt een vraag over de wijn: ' +
+              d.producer + ' ' + d.wineName + ' (' + (d.vintage || 'NV') + ', ' + d.wineType + ', Body: ' + d.wsetBody + ', Tannine/Grip: ' + d.wsetTanninsOrGrip + ', Zuren: ' + d.wsetAcidity + ').\n' +
+              'Vraag van gebruiker: "' + q + '"\n' +
+              'Antwoord UITSLUITEND met één geldig JSON-object zonder extra tekst:\n' +
+              '{\n' +
+              '  "verdict": "Goede match", "Let op" of "Sommelier Advies",\n' +
+              '  "reasoning": "Korte, feitelijke uitleg in maximaal 2 zinnen over smaakbalans, zuren, tannines of kaas/gerecht.",\n' +
+              '  "chefsTouch": "Eén concrete keukentip of serveeraanpassing om de combinatie met deze wijn optimaal te laten slagen."\n' +
+              '}';
+
+            var resp = await callGeminiApi({
+              contents: [{ role: 'user', parts: [{ text: menuCheckPrompt }] }],
+              generationConfig: { temperature: 0.1, responseMimeType: 'application/json' }
+            });
+
+            var parsed = null;
+            try {
+              parsed = parseJsonSafely(resp.text);
+            } catch (parseErr) {
+              parsed = null;
+            }
+
+            if (parsed && parsed.reasoning) {
+              appState.qaItems.unshift({ q: q, structured: parsed });
+            } else {
+              appState.qaItems.unshift({ q: q, a: String(resp.text || '').trim() });
+            }
+            var list = document.getElementById('qaList');
+            if (list) list.innerHTML = renderQaHistory();
+          } catch (err) {
+            showMsg('Kon de vraag niet beantwoorden.');
+          } finally {
+            setBusy(false);
+          }
+        };
+      }
+
+      function switchTab(tab) {
+        appState.activeTab = tab;
+        var s1 = document.getElementById('screenScanner');
+        var s2 = document.getElementById('screenDossier');
+        var bScan = document.getElementById('navScanBtn');
+        var bDos = document.getElementById('navDossierBtn');
+
+        if (tab === 'scanner') {
+          if (s1) s1.classList.remove('hidden');
+          if (s2) s2.classList.add('hidden');
+          if (bScan) { bScan.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-800 text-white font-bold text-xs shadow-sm'; }
+          if (bDos) { bDos.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs relative'; }
+        } else {
+          if (s1) s1.classList.add('hidden');
+          if (s2) s2.classList.remove('hidden');
+          if (bScan) { bScan.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs'; }
+          if (bDos) { bDos.className = 'flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-800 text-white font-bold text-xs shadow-sm relative'; }
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      function init() {
+        setupPwaManifest();
+        renderRecentCacheList();
+
+        var cam = document.getElementById('cameraInput');
+        var gal = document.getElementById('galleryInput');
+
+        if (cam) {
+          cam.onchange = function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (file) handleFileSelected(file, cam);
+          };
+        }
+        if (gal) {
+          gal.onchange = function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (file) handleFileSelected(file, gal);
+          };
+        }
+
+        var txtForm = document.getElementById('textInputForm');
+        if (txtForm) {
+          txtForm.onsubmit = function (e) {
+            e.preventDefault();
+            var n = document.getElementById('txtWineName').value.trim();
+            var v = document.getElementById('txtVintage').value.trim();
+            var r = document.getElementById('txtRegion').value.trim();
+            if (!n) { showMsg('Vul de wijnnaam in.'); return; }
+            runAnalysis({ wineQuery: n, vintage: v, region: r }, false);
+          };
+        }
+
+        var clr = document.getElementById('clearPhotoBtn');
+        if (clr) {
+          clr.onclick = function () {
+            appState.currentPhoto = null;
+            document.getElementById('photoPreviewCard').classList.add('hidden');
+          };
+        }
+
+        var ana = document.getElementById('analyzePhotoBtn');
+        if (ana) {
+          ana.onclick = function () {
+            if (appState.currentPhoto) runAnalysis({ base64Image: appState.currentPhoto.base64, mimeType: appState.currentPhoto.mime }, true);
+          };
+        }
+
+        var clrCache = document.getElementById('clearCacheBtn');
+        if (clrCache) {
+          clrCache.onclick = function () {
+            appState.cache = {};
+            saveCache();
+          };
+        }
+
+        var navScan = document.getElementById('navScanBtn');
+        var navDos = document.getElementById('navDossierBtn');
+        var home = document.getElementById('brandHomeBtn');
+        if (navScan) navScan.onclick = function () { switchTab('scanner'); };
+        if (navDos) navDos.onclick = function () { switchTab('dossier'); };
+        if (home) home.onclick = function () { switchTab('scanner'); };
+        var banClose = document.getElementById('statusBannerClose');
+        if (banClose) banClose.onclick = hideMsg;
+
+        updateApiKeyBadge();
+        var keyBtn = document.getElementById('apiKeyModalBtn');
+        var shareBtn = document.getElementById('shareAppModalBtn');
+        var keyModal = document.getElementById('apiKeyModal');
+        var closeKeyModal = document.getElementById('closeApiKeyModal');
+        var keyInput = document.getElementById('customApiKeyInput');
+        var saveKeyBtn = document.getElementById('saveApiKeyBtn');
+        var clearKeyBtn = document.getElementById('clearApiKeyBtn');
+        var copyShareBtn = document.getElementById('copyShareLinkBtn');
+        var shareFeedback = document.getElementById('shareLinkFeedback');
+
+        function openSettingsModal() {
+          if (keyInput) keyInput.value = appState.customApiKey || '';
+          if (shareFeedback) shareFeedback.classList.add('hidden');
+          if (keyModal) keyModal.classList.remove('hidden');
+        }
+
+        if (keyBtn) keyBtn.onclick = openSettingsModal;
+        if (shareBtn) shareBtn.onclick = openSettingsModal;
+
+        if (closeKeyModal && keyModal) {
+          closeKeyModal.onclick = function () { keyModal.classList.add('hidden'); };
+        }
+        if (saveKeyBtn && keyModal) {
+          saveKeyBtn.onclick = function () {
+            var val = keyInput ? keyInput.value.trim() : '';
+            appState.customApiKey = val;
+            try { localStorage.setItem(API_KEY_STORAGE, val); } catch (e) {}
+            updateApiKeyBadge();
+            if (shareFeedback) {
+              shareFeedback.textContent = '✓ Sleutel opgeslagen! Je kunt nu hierboven je Vrienden-Deellink kopiëren.';
+              shareFeedback.classList.remove('hidden');
+            }
+          };
+        }
+        if (clearKeyBtn && keyModal) {
+          clearKeyBtn.onclick = function () {
+            appState.customApiKey = '';
+            if (keyInput) keyInput.value = '';
+            try { localStorage.removeItem(API_KEY_STORAGE); } catch (e) {}
+            updateApiKeyBadge();
+            keyModal.classList.add('hidden');
+          };
+        }
+        if (copyShareBtn) {
+          copyShareBtn.onclick = function () {
+            var currentKey = (keyInput && keyInput.value.trim()) ? keyInput.value.trim() : appState.customApiKey;
+            if (currentKey) {
+              appState.customApiKey = currentKey;
+              try { localStorage.setItem(API_KEY_STORAGE, currentKey); } catch (e) {}
+              updateApiKeyBadge();
+            }
+            var baseUrl = window.location.href.split('?')[0].split('#')[0];
+            var shareUrl = baseUrl;
+            if (currentKey) {
+              var enc = encodeKeyForShare(currentKey);
+              shareUrl = baseUrl + '#?k=' + enc;
+            }
+            copyTextSilently(shareUrl);
+            if (shareFeedback) {
+              shareFeedback.textContent = currentKey
+                ? '✓ Vrienden-Deellink gekopieerd! Iedereen die deze link opent kan de app direct zonder sleutel gebruiken.'
+                : '✓ App-link gekopieerd (tekst-zoekopdrachten werken direct via de gratis fallback).';
+              shareFeedback.classList.remove('hidden');
+            }
+          };
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
+```
